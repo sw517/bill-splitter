@@ -16,11 +16,15 @@ export const usePeopleStore = defineStore('people', () => {
     return people.value?.find((person: Person) => person.id === id);
   };
 
-  function editName(id: Person['id'], name: Person['name']): void {
+  function editPerson<Key extends keyof Person>(
+    id: Person['id'],
+    field: Key,
+    input: Person[Key]
+  ): void {
     const personIndex: number = people.value.findIndex((person: Person) => person.id === id);
     if (personIndex === -1) return;
-    people.value[personIndex].name = name;
+    people.value[personIndex][field] = input;
   }
 
-  return { people, editName, getPersonById };
+  return { people, editPerson, getPersonById };
 });
