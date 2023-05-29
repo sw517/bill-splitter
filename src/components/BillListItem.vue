@@ -36,6 +36,7 @@ const peopleOptions = computed(() =>
 
 <template>
   <div>
+    <!-- Todo: Show if bill is unaccounted for if a person is deleted -->
     <VTextField
       :label="placeholder"
       :model-value="bill.name"

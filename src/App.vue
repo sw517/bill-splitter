@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import PersonList from './components/PersonList.vue';
 import BillList from './components/BillList.vue';
+import OutgoingsList from './components/OutgoingsList.vue';
 </script>
 
 <template>
   <header></header>
   <main>
     <PersonList class="mb-1" />
-    <BillList />
+    <BillList class="mb-1" />
+    <OutgoingsList class="mb-1" />
   </main>
 </template>

@@ -16,6 +16,10 @@ export const usePeopleStore = defineStore('people', () => {
     return people.value?.find((person: Person) => person.id === id);
   };
 
+  function addPerson() {
+    people.value.push(blankPerson());
+  }
+
   function editPerson<Key extends keyof Person>(
     id: Person['id'],
     field: Key,
@@ -26,5 +30,5 @@ export const usePeopleStore = defineStore('people', () => {
     people.value[personIndex][field] = input;
   }
 
-  return { people, editPerson, getPersonById };
+  return { people, addPerson, editPerson, getPersonById };
 });
