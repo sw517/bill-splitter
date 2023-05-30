@@ -18,12 +18,7 @@ const onInput = <Key extends keyof Bill>(input: Bill[Key], field: Key) => {
 };
 
 const billFrequencyOptions = (Object.keys(BillFrequency) as Array<keyof typeof BillFrequency>).map(
-  (key) => {
-    return {
-      title: key,
-      value: BillFrequency[key],
-    };
-  }
+  (key) => BillFrequency[key]
 );
 
 const peopleOptions = computed(() =>
@@ -67,7 +62,6 @@ const peopleOptions = computed(() =>
       label="Paid by"
       :model-value="bill.paidBy"
       :items="peopleOptions"
-      multiple
       @update:modelValue="onInput($event, 'paidBy')"
     />
   </div>

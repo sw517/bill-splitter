@@ -11,13 +11,14 @@ const props = defineProps<{
   placeholder: string;
 }>();
 
-const { billsMonthly } = storeToRefs(useBillsStore());
+const billsStore = useBillsStore();
+const getBillShare = billsStore.getBillShare;
 const peopleStore = usePeopleStore();
 const people = peopleStore.people;
 const getPersonById = peopleStore.getPersonById;
 
 const totalOutgoing = computed(() =>
-  billsMonthly.value.reduce((acc: number, bill: Bill) => {
+  billsStore.billsMonthly.reduce((acc: number, bill: Bill) => {
     if (bill.paidBy.includes(props.person.id)) {
       const billShare = bill.cost / bill.paidBy.length;
       return acc + billShare;
@@ -27,12 +28,15 @@ const totalOutgoing = computed(() =>
   }, 0)
 );
 
+// const individualsDebt = billsStore.debtByPersonId[props.person.id]
+
 const debtPerPerson = computed(() =>
-  billsMonthly.value.reduce((acc: object, bill: Bill) => {
+  billsStore.billsMonthly.reduce((acc: object, bill: Bill) => {
     if (bill.paidBy.includes(props.person.id) || !bill.belongsTo.includes(props.person.id)) {
       return acc;
     }
-    const billShare = bill.cost / bill.belongsTo.length;
+
+    const billShare = getBillShare(bill, props.person.id);
     return bill.paidBy.reduce((newAcc: object, personId: Person['id']) => {
       if (acc[personId as keyof typeof acc]) {
         return { ...acc, [personId]: acc[personId as keyof typeof acc] + billShare };

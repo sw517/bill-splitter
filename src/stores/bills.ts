@@ -1,6 +1,13 @@
-import { BillFrequency, type Bill } from '@/types/Bill';
+import {
+  BillFrequency,
+  type Bill,
+  type DebtStructure,
+  type CreditorStructure,
+  type TotalOutgoings,
+  SplitType,
+} from '@/types/Bill';
 import { type Person } from '@/types/Person';
-import { defineStore } from 'pinia';
+import { defineStore, storeToRefs } from 'pinia';
 import { computed, ref, type ComputedRef, type Ref } from 'vue';
 import { v4 as uuidv4 } from 'uuid';
 import { usePeopleStore } from './people';
@@ -9,16 +16,17 @@ const blankBill = (): Bill => ({
   id: uuidv4(),
   name: '',
   cost: 0,
-  frequency: BillFrequency.Monthly,
+  frequency: BillFrequency.MONTHLY,
   belongsTo: [],
-  paidBy: [],
+  paidBy: undefined,
 });
 
 export const useBillsStore = defineStore('bills', () => {
-  const peopleStore = usePeopleStore();
-  const people = peopleStore.people;
-
   const bills: Ref<Bill[]> = ref([blankBill()]);
+  const splitType: Ref<SplitType> = ref(SplitType.EQUAL);
+  const peopleStore = usePeopleStore();
+  const { people } = storeToRefs(peopleStore);
+  const getPersonById = peopleStore.getPersonById;
 
   function addBill() {
     bills.value.push(blankBill());
@@ -32,35 +40,71 @@ export const useBillsStore = defineStore('bills', () => {
 
   const billsMonthly: ComputedRef<Bill[]> = computed(() => {
     return bills.value.map((bill: Bill) => {
-      const cost = bill.frequency === BillFrequency.Monthly ? bill.cost : bill.cost / 12;
+      const cost = bill.frequency === BillFrequency.MONTHLY ? bill.cost : bill.cost / 12;
       return {
         ...bill,
-        frequency: BillFrequency.Monthly,
+        frequency: BillFrequency.MONTHLY,
         cost,
       };
     });
   });
 
+  const totalOutgoings = computed(() => {
+    return billsMonthly.value.reduce((acc: TotalOutgoings, bill: Bill) => {
+      if (!bill.paidBy) return acc;
+
+      if (acc[bill.paidBy]) {
+        return { ...acc, [bill.paidBy]: acc[bill.paidBy] + bill.cost / bill.paidBy.length };
+      }
+      return { ...acc, [bill.paidBy]: bill.cost / bill.paidBy.length };
+    }, {});
+  });
+
   const debtByPersonId = computed(() =>
-    people.map((person: Person) => {
-      const debts = billsMonthly.value.reduce((acc: object, bill: Bill) => {
-        if (bill.paidBy.includes(person.id) || !bill.belongsTo.includes(person.id)) {
-          return acc;
-        }
-        const billShare = bill.cost / bill.belongsTo.length;
-        return bill.paidBy.reduce((newAcc: object, personId: Person['id']) => {
-          if (acc[personId as keyof typeof acc]) {
-            return { ...acc, [personId]: acc[personId as keyof typeof acc] + billShare };
-          } else {
-            return { ...acc, [personId]: billShare };
-          }
-        }, acc);
-      }, {});
-      return {
-        [person.id]: debts,
-      };
-    })
+    // billsMonthly.value.reduce((accDebtors: DebtStructure, bill: Bill) => {
+    //   if (!bill.paidBy) return accDebtors;
+    //   if (!bill.belongsTo.length) return accDebtors;
+    //   if (bill.belongsTo.length === 1 && bill.belongsTo[0] === bill.paidBy) return accDebtors;
+      
+    //   const creditorId = bill.paidBy
+    //   return bill.belongsTo.reduce((acc, debtorId: Person['id']) => {
+    //     if (acc[debtorId]) {
+    //       if (acc[debtorId][creditorId]) {
+    //         return { ...acc, [debtorId]: { ... } }
+    //       }
+    //       return { ...acc, [debtorId]:  }
+    //     }
+    //   }, accDebtors)
+    // }, {})
   );
 
-  return { bills, addBill, editBill, billsMonthly, debtByPersonId };
+  function getBillShare(bill: Bill, personId: Person['id']) {
+    if (!bill.belongsTo.includes(personId)) return 0;
+
+    if (splitType.value === SplitType.EQUAL) {
+      return parseFloat((bill.cost / bill.belongsTo.length).toFixed(2));
+    } else {
+      const income = getPersonById(personId)?.income;
+      const totalIncomesOfBillUsers = people.value.reduce((acc: number, person: Person) => {
+        if (bill.belongsTo.includes(person.id)) {
+          return acc + person.income;
+        }
+        return acc;
+      }, 0);
+      if (!income || !totalIncomesOfBillUsers) return 0;
+      const ratioShare = income / totalIncomesOfBillUsers;
+      return parseFloat((bill.cost * ratioShare).toFixed(2));
+    }
+  }
+
+  return {
+    bills,
+    addBill,
+    editBill,
+    billsMonthly,
+    splitType,
+    getBillShare,
+    totalOutgoings,
+    debtsByPersonId,
+  };
 });
