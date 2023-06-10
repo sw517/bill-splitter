@@ -1,0 +1,36 @@
+@import url('https://fonts.googleapis.com/css2?family=Monomaniac+One&display=swap');
+
+/* color palette from <https://github.com/vuejs/theme> */
+:root {
+  --custom-green-lightest: #e6eae4;
+  --custom-green-lighter: #cad2c5;
+  --custom-green-light: #84a98c;
+  --custom-green: #52796f;
+  --custom-green-dark: #354f52;
+  --custom-green-darker: #2f3e46;
+  --custom-green-darkest: #172027;
+
+  --custom-title-font: 'Monomaniac One';
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  font-weight: normal;
+}
+
+body {
+  min-height: 100vh;
+  color: var(--color-text);
+  background: var(--color-background);
+  transition: color 0.5s, background-color 0.5s;
+  line-height: 1.6;
+  font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu,
+    Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  font-size: 15px;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}

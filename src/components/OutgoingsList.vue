@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import OutgoingsListItem from '@/components/OutgoingsListItem.vue';
+import SplitTypeToggle from './SplitTypeToggle.vue';
 import { usePeopleStore } from '@/stores/people';
 import { storeToRefs } from 'pinia';
 
@@ -8,10 +9,11 @@ const { people } = storeToRefs(usePeopleStore());
 
 <template>
   <VCard title="Total Monthly Outgoings">
+    <SplitTypeToggle />
     <OutgoingsListItem
-      v-for="(person, index) in people"
+      v-for="person in people"
+      :key="person.id"
       :person="person"
-      :placeholder="`Person #${index + 1}`"
     />
   </VCard>
 </template>

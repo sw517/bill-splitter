@@ -9,12 +9,14 @@ const addBill = billsStore.addBill;
 
 <template>
   <VCard title="Bills">
-    <BillListItem
-      v-for="(bill, index) in bills"
-      :bill="bill"
-      :placeholder="`Bill #${index + 1}`"
-      class="mb-1"
-    />
-    <VBtn prepend-icon="mdi-plus" @click="addBill">Add bill</VBtn>
+    <VContainer>
+      <BillListItem v-for="(bill, index) in bills" :bill="bill" :index="index" class="mb-1" />
+      <VRow dense>
+        <VSpacer />
+        <VCol cols="auto">
+          <VBtn flat color="primary" prepend-icon="mdi-plus" @click="addBill"> Add bill </VBtn>
+        </VCol>
+      </VRow>
+    </VContainer>
   </VCard>
 </template>

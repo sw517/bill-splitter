@@ -8,8 +8,8 @@ const billStore = useBillsStore();
 
 <template>
   <div>
-    <v-label>Bill Split</v-label>
     <VSwitch
+      color="primary"
       v-model="billStore.splitType"
       label="Income Ratio"
       inset
@@ -17,7 +17,7 @@ const billStore = useBillsStore();
       :true-value="SplitType.RATIO"
     >
       <template #prepend>
-        <v-label>Equal</v-label>
+        <VLabel>Equal</VLabel>
       </template>
     </VSwitch>
   </div>

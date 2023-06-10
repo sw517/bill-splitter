@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, test } from 'vitest';
-import { setActivePinia, createPinia, type Store } from 'pinia';
+import { setActivePinia, createPinia, storeToRefs } from 'pinia';
 import { useBillsStore } from '@/stores/bills';
 import { BillFrequency, SplitType } from '@/types/Bill';
 import { usePeopleStore } from '@/stores/people';
@@ -14,21 +14,68 @@ describe('Store: bills', () => {
     expect(billsStore.bills).toHaveLength(1);
   });
 
-  it('creates a new blank bill', () => {
-    const billsStore = useBillsStore();
-    expect(billsStore.bills).toHaveLength(1);
-    billsStore.addBill();
-    expect(billsStore.bills).toHaveLength(2);
-    expect(billsStore.bills[1]).toEqual(
-      expect.objectContaining({
-        id: expect.any(String),
-        name: '',
-        cost: 0,
-        frequency: BillFrequency.MONTHLY,
-        belongsTo: [],
-        paidBy: undefined,
-      })
-    );
+  describe('Creating a new bill', () => {
+    it('creates a new blank bill', () => {
+      const billsStore = useBillsStore();
+      expect(billsStore.bills).toHaveLength(1);
+      billsStore.addBill();
+      expect(billsStore.bills).toHaveLength(2);
+      expect(billsStore.bills[1]).toEqual(
+        expect.objectContaining({
+          id: expect.any(String),
+          name: '',
+          cost: 0,
+          frequency: BillFrequency.MONTHLY,
+          belongsTo: expect.any(Array),
+          paidBy: expect.any(String),
+        })
+      );
+    });
+
+    it('assigns all people to belongsTo by default', () => {
+      const peopleStore = usePeopleStore();
+      peopleStore.$patch({
+        people: [
+          {
+            id: 'id-112',
+            name: 'Jim',
+            income: 2000,
+          },
+          {
+            id: 'id-334',
+            name: 'Ann',
+            income: 1000,
+          },
+        ],
+      });
+
+      const billsStore = useBillsStore();
+      expect(billsStore.bills).toHaveLength(1);
+      billsStore.addBill();
+      expect(billsStore.bills).toHaveLength(2);
+      expect(billsStore.bills[1]).toEqual(
+        expect.objectContaining({
+          belongsTo: ['id-112', 'id-334'],
+        })
+      );
+    });
+
+    it('assigns the default bill payer to paidTo', () => {
+      const peopleStore = usePeopleStore();
+      peopleStore.$patch({
+        defaultPayer: 'id-101',
+      });
+
+      const billsStore = useBillsStore();
+      expect(billsStore.bills).toHaveLength(1);
+      billsStore.addBill();
+      expect(billsStore.bills).toHaveLength(2);
+      expect(billsStore.bills[1]).toEqual(
+        expect.objectContaining({
+          paidBy: 'id-101',
+        })
+      );
+    });
   });
 
   it('edits a bill', () => {
