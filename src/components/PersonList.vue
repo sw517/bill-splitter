@@ -16,11 +16,20 @@ const addPerson = peopleStore.addPerson;
         :key="person.id"
         :person="person"
         :index="index"
+        data-vitest="person-list-item"
       />
       <VRow dense>
-        <VSpacer />
+        <VCol />
         <VCol cols="auto">
-          <VBtn flat color="primary" prepend-icon="mdi-plus" @click="addPerson"> Add person </VBtn>
+          <VBtn
+            flat
+            color="primary"
+            prepend-icon="mdi-plus"
+            data-vitest="person-list-button-add-person"
+            @click="addPerson"
+          >
+            Add person
+          </VBtn>
         </VCol>
       </VRow>
     </VContainer>

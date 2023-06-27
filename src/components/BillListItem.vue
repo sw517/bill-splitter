@@ -33,7 +33,7 @@ const peopleOptions = computed(() =>
 </script>
 
 <template>
-  <VRow class="d-flex align-center" dense>
+  <VRow class="flex items-center" dense>
     <!-- Todo: Show if bill is unaccounted for if a person is deleted -->
     <VCol cols="6">
       <VTextField
@@ -68,11 +68,11 @@ const peopleOptions = computed(() =>
     </VCol>
     <VDialog v-model:model-value="dialogOpen">
       <VCard>
-        <VCardTitle class="d-flex justify-between">
+        <VCardTitle class="flex justify-between">
           <span>
             {{ bill.name || 'Unnamed bill' }}
           </span>
-          <span class="d-inline-flex items-baseline">
+          <span class="inline-flex items-baseline">
             <VIcon :icon="currencyIcon" size="x-small" />
             {{ bill.cost }}
           </span>
@@ -99,7 +99,7 @@ const peopleOptions = computed(() =>
             @update:modelValue="onInput($event, 'paidBy')"
           />
         </VCardText>
-        <VCardActions class="d-flex justify-between">
+        <VCardActions class="flex justify-between">
           <VBtn variant="flat" color="error">Remove bill</VBtn>
           <VBtn color="accent" @click="dialogOpen = false">Close</VBtn>
         </VCardActions>

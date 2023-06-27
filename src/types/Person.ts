@@ -3,5 +3,4 @@ export interface Person {
   fallbackName: string;
   id: string;
   income: number;
-  color: string;
 }

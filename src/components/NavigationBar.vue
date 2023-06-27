@@ -21,12 +21,12 @@ console.log(currencyOptions);
     </template>
     <v-app-bar-title>
       <div class="flex items-center pr-4">
-        <div class="navigation-bar__title mr-4 grow uppercase">Bill Splitter</div>
+        <div class="navigation-bar__title mr-4 grow">Bill Splitter</div>
         <VSelect
-          density="compact"
-          hide-details
           v-model:model-value="currency"
           :items="currencyOptions"
+          density="compact"
+          hide-details
           class="grow-0"
         >
           <template #item="{ item, props }">
@@ -35,8 +35,10 @@ console.log(currencyOptions);
             </VListItem>
           </template>
           <template #selection="{ item }">
-            <VIcon :icon="CurrencyIcon[item.value as Currency]" class="mr-4" />
-            <div>{{ item.value }}</div>
+            <div class="flex items-center">
+              <VIcon :icon="CurrencyIcon[item.value as Currency]" class="mr-4" size="small" />
+              <div>{{ item.value }}</div>
+            </div>
           </template>
         </VSelect>
       </div>
@@ -44,8 +46,17 @@ console.log(currencyOptions);
   </VAppBar>
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .navigation-bar__title {
   font-family: var(--custom-title-font);
+}
+
+.navigation-bar {
+  :deep(.v-field__input) {
+    min-height: var(--v-field-input-min-height);
+  }
+  :deep(.v-select__selection) {
+    margin: 0;
+  }
 }
 </style>

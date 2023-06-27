@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, test } from 'vitest';
-import { setActivePinia, createPinia, storeToRefs } from 'pinia';
+import { setActivePinia, createPinia } from 'pinia';
 import { useBillsStore } from '@/stores/bills';
 import { BillFrequency, SplitType } from '@/types/Bill';
 import { usePeopleStore } from '@/stores/people';

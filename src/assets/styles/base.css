@@ -1,4 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Monomaniac+One&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Monomaniac+One&family=Noto+Serif:wght@400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Monomaniac+One&family=Noto+Serif:wght@100&family=Roboto+Mono&display=swap');
 
 /* color palette from <https://github.com/vuejs/theme> */
 :root {
@@ -10,7 +12,9 @@
   --custom-green-darker: #2f3e46;
   --custom-green-darkest: #172027;
 
-  --custom-title-font: 'Monomaniac One';
+  /* --custom-title-font: 'Monomaniac One'; */
+  /* --custom-title-font: 'Noto Serif'; */
+  --custom-title-font: 'Roboto Mono';
 }
 
 *,

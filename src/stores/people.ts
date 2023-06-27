@@ -1,20 +1,13 @@
-import { ref, Ref } from 'vue';
+import { ref, type Ref } from 'vue';
 import { defineStore } from 'pinia';
 import { v4 as uuidv4 } from 'uuid';
 import type { Person } from '@/types/Person';
 
-const blankPerson = ({
-  name = '',
-  fallbackName = '',
-  id = uuidv4(),
-  income = 0,
-  color = '#000',
-} = {}): Person => ({
+const blankPerson = ({ name = '', fallbackName = '', id = uuidv4(), income = 0 } = {}): Person => ({
   name,
   fallbackName,
   id,
   income,
-  color,
 });
 
 export const usePeopleStore = defineStore('people', () => {
