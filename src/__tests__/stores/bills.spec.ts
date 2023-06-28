@@ -366,13 +366,63 @@ describe('Store: bills', () => {
     });
 
     test('when bill split is equal', () => {
-      expect(billsStore.debtsByPersonId).toEqual({
-        [peopleStore.people[1].id]: {
-          [peopleStore.people[0].id]: 450,
+      expect(billsStore.getDebtsByPersonId('2')).toEqual({
+        '1': 450,
+      });
+      expect(billsStore.getDebtsByPersonId('3')).toEqual({
+        '1': 100,
+        '2': 50,
+      });
+    });
+
+    test('when bill split is based on income ratio', () => {
+      billsStore.$patch({
+        splitType: SplitType.RATIO,
+      });
+      expect(billsStore.getDebtsByPersonId('2')).toEqual({
+        '1': 300,
+      });
+      expect(billsStore.getDebtsByPersonId('3')).toEqual({
+        '1': 100,
+        '2': 54.55,
+      });
+    });
+
+    test('debts can be cancelled out', () => {
+      billsStore.$patch({
+        splitType: SplitType.EQUAL,
+        bills: [
+          {
+            id: '1',
+            name: 'Electric',
+            frequency: BillFrequency.MONTHLY,
+            cost: 100,
+            paidBy: '1',
+            belongsTo: ['1', '2'],
+          },
+          {
+            id: '2',
+            name: 'Gas',
+            frequency: BillFrequency.MONTHLY,
+            cost: 100,
+            paidBy: '2',
+            belongsTo: ['1', '2'],
+          },
+        ],
+      });
+
+      expect(billsStore.getDebtsByPersonId('1')).toEqual({});
+      expect(billsStore.getDebtsByPersonId('2')).toEqual({});
+    });
+
+    test('it builds a structure of debts', () => {
+      expect(billsStore.allDebtsByPersonId).toEqual({
+        '2': {
+          '1': 450,
         },
-        [peopleStore.people[2].id]: {
-          [peopleStore.people[0].id]: 100,
-          [peopleStore.people[1].id]: 50,
+        '3': {
+          '1': 100,
+          '2': 50,
         },
       });
     });

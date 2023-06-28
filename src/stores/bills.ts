@@ -2,6 +2,7 @@ import {
   BillFrequency,
   type Bill,
   type DebtStructure,
+  type DebtStructures,
   type TotalOutgoings,
   SplitType,
 } from '@/types/Bill';
@@ -56,33 +57,49 @@ export const useBillsStore = defineStore('bills', () => {
       if (!bill.paidBy) return acc;
 
       if (acc[bill.paidBy]) {
-        return { ...acc, [bill.paidBy]: acc[bill.paidBy] + bill.cost / bill.paidBy.length };
+        return { ...acc, [bill.paidBy]: acc[bill.paidBy] + bill.cost };
       }
-      return { ...acc, [bill.paidBy]: bill.cost / bill.paidBy.length };
+      return { ...acc, [bill.paidBy]: bill.cost };
     }, {});
   });
 
-  const debtsByPersonId = computed(() =>
-    billsMonthly.value.reduce((accDebtors: DebtStructure, bill: Bill) => {
-      if (!bill.paidBy) return accDebtors;
-      if (!bill.belongsTo.length) return accDebtors;
-      if (bill.belongsTo.length === 1 && bill.belongsTo[0] === bill.paidBy) return accDebtors;
-
-      const creditorId = bill.paidBy;
-      return bill.belongsTo.reduce((acc, debtorId: Person['id']) => {
-        return _mergeWith(
-          {},
-          accDebtors,
-          { [debtorId]: { [creditorId]: getBillShare(bill, debtorId) } },
-          (objValue, srcValue) => {
-            if (typeof objValue === 'number') {
-              return objValue + srcValue;
-            }
-          }
-        );
-      }, accDebtors);
+  const allDebtsByPersonId = computed(() =>
+    peopleStore.people.reduce((acc: DebtStructures, person: Person) => {
+      const debts = getDebtsByPersonId(person.id);
+      if (Object.keys(debts).length) {
+        return { ...acc, [person.id]: debts };
+      }
+      return acc;
     }, {})
   );
+
+  const getDebtsByPersonId = (personId: Person['id']) => {
+    const debtsObject = billsMonthly.value.reduce((acc: DebtStructure, bill: Bill) => {
+      if (!bill.paidBy) return acc;
+      if (!bill.belongsTo.length) return acc;
+      if (bill.belongsTo.length === 1 && bill.belongsTo[0] === bill.paidBy) return acc;
+      if (bill.paidBy !== personId && !bill.belongsTo.includes(personId)) return acc;
+
+      const currentBillDebts = bill.belongsTo.reduce((billAcc, debtorId: Person['id']) => {
+        if (bill.paidBy === debtorId) return billAcc;
+        if (bill.paidBy === personId) {
+          return { ...billAcc, [debtorId]: -getBillShare(bill, debtorId) };
+        }
+        return { ...billAcc, [bill.paidBy as string]: getBillShare(bill, debtorId) };
+      }, {});
+
+      return _mergeWith({}, acc, currentBillDebts, (objValue, srcValue) => {
+        if (typeof objValue === 'number') {
+          return objValue + srcValue;
+        }
+      });
+    }, {});
+
+    return Object.entries(debtsObject).reduce((acc, [creditorId, amount]) => {
+      if (amount <= 0) return acc;
+      return { ...acc, [creditorId]: amount };
+    }, {});
+  };
 
   function getBillShare(bill: Bill, personId: Person['id']) {
     if (!bill.belongsTo.includes(personId)) return 0;
@@ -110,7 +127,8 @@ export const useBillsStore = defineStore('bills', () => {
     billsMonthly,
     splitType,
     getBillShare,
+    getDebtsByPersonId,
     totalOutgoings,
-    debtsByPersonId,
+    allDebtsByPersonId,
   };
 });

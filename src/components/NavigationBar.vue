@@ -5,7 +5,6 @@ import { Currency, CurrencyIcon } from '@/types/General';
 
 const { currency } = storeToRefs(useGeneralStore());
 const currencyOptions = Object.keys(Currency);
-console.log(currencyOptions);
 </script>
 
 <template>

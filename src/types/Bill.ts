@@ -11,14 +11,14 @@ export enum BillFrequency {
 }
 
 export interface TotalOutgoings {
-  [creditorId: Person['id']]: number;
+  [personId: Person['id']]: number;
 }
-export interface CreditorStructure {
-  [creditorId: Person['id']]: number;
+export interface DebtStructure {
+  [debtorId: Person['id']]: number;
 }
 
-export interface DebtStructure {
-  [debtorId: Person['id']]: CreditorStructure;
+export interface DebtStructures {
+  [debtorId: Person['id']]: DebtStructure;
 }
 export interface Bill {
   id: string;

@@ -14,7 +14,7 @@ const props = defineProps<{
 const billsStore = useBillsStore();
 const { currencyIcon } = storeToRefs(useGeneralStore());
 const { people } = storeToRefs(usePeopleStore());
-const dialogOpen = ref(false);
+const showConfigureDialog = ref(false);
 
 const onInput = <Key extends keyof Bill>(input: Bill[Key], field: Key) => {
   billsStore.editBill(props.bill.id, field, input);
@@ -30,6 +30,8 @@ const peopleOptions = computed(() =>
     value: person.id,
   }))
 );
+
+defineExpose({ showConfigureDialog });
 </script>
 
 <template>
@@ -40,6 +42,7 @@ const peopleOptions = computed(() =>
         label="Bill description"
         :model-value="bill.name"
         hide-details
+        data-vitest="bill-list-item-input-description"
         @update:modelValue="onInput($event, 'name')"
       />
     </VCol>
@@ -49,6 +52,7 @@ const peopleOptions = computed(() =>
         :model-value="bill.cost"
         type="number"
         hide-details
+        data-vitest="bill-list-item-input-cost"
         @update:modelValue="onInput(Number($event), 'cost')"
       >
         <template #prepend-inner>
@@ -59,14 +63,15 @@ const peopleOptions = computed(() =>
     <VCol cols="2" sm="1" class="text-right">
       <VBtn
         icon="mdi-cog"
-        title="Configure"
+        title="Configure bill"
         color="primary"
         flat
         size="x-small"
-        @click="dialogOpen = true"
+        data-vitest="bill-list-item-button-configure"
+        @click="showConfigureDialog = true"
       />
     </VCol>
-    <VDialog v-model:model-value="dialogOpen">
+    <VDialog v-model:model-value="showConfigureDialog" data-vitest="bill-list-item-dialog">
       <VCard>
         <VCardTitle class="flex justify-between">
           <span>
@@ -82,6 +87,7 @@ const peopleOptions = computed(() =>
             label="Frequency"
             :model-value="bill.frequency"
             :items="billFrequencyOptions"
+            data-vitest="bill-list-item-input-frequency"
             @update:modelValue="onInput($event, 'frequency')"
           />
           <!-- Todo: Change input text to show 'Everyone' if all are selected -->
@@ -90,18 +96,20 @@ const peopleOptions = computed(() =>
             :model-value="bill.belongsTo"
             :items="peopleOptions"
             multiple
+            data-vitest="bill-list-item-input-belongsto"
             @update:modelValue="onInput($event, 'belongsTo')"
           />
           <VSelect
             label="Paid by"
             :model-value="bill.paidBy"
             :items="peopleOptions"
+            data-vitest="bill-list-item-input-paidby"
             @update:modelValue="onInput($event, 'paidBy')"
           />
         </VCardText>
         <VCardActions class="flex justify-between">
-          <VBtn variant="flat" color="error">Remove bill</VBtn>
-          <VBtn color="accent" @click="dialogOpen = false">Close</VBtn>
+          <VBtn @click="showConfigureDialog = false">Close</VBtn>
+          <VBtn variant="flat" color="error" prepend-icon="mdi-delete">Remove bill</VBtn>
         </VCardActions>
       </VCard>
     </VDialog>

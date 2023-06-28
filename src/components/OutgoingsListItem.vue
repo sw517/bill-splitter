@@ -24,9 +24,9 @@ const totalOutgoing = computed(() =>
   }, 0)
 );
 
-const { debtsByPersonId } = storeToRefs(billsStore);
+const { allDebtsByPersonId } = storeToRefs(billsStore);
 const individualsDebts = computed(() => {
-  return debtsByPersonId.value[props.person.id];
+  return allDebtsByPersonId.value[props.person.id];
 });
 
 const getNameById = (id: Person['id']) => {
