@@ -7,29 +7,27 @@ import {
   SplitType,
 } from '@/types/Bill';
 import { type Person } from '@/types/Person';
-import { defineStore, storeToRefs } from 'pinia';
+import { defineStore } from 'pinia';
 import { computed, ref, type ComputedRef, type Ref } from 'vue';
 import { v4 as uuidv4 } from 'uuid';
 import { usePeopleStore } from './people';
 import { mergeWith as _mergeWith } from 'lodash-es';
 
 export const useBillsStore = defineStore('bills', () => {
-  const peopleStore = usePeopleStore();
-  const { people, defaultPayer } = storeToRefs(peopleStore);
-
-  const blankBill = (): Bill => ({
-    id: uuidv4(),
-    name: '',
-    cost: 0,
-    frequency: BillFrequency.MONTHLY,
-    belongsTo: people.value.map(({ id }) => id),
-    paidBy: defaultPayer.value,
-  });
+  const blankBill = (): Bill => {
+    const peopleStore = usePeopleStore();
+    return {
+      id: uuidv4(),
+      name: '',
+      cost: 0,
+      frequency: BillFrequency.MONTHLY,
+      belongsTo: peopleStore.people.map(({ id }) => id),
+      paidBy: peopleStore.defaultPayer,
+    };
+  };
 
   const bills: Ref<Bill[]> = ref([blankBill()]);
   const splitType: Ref<SplitType> = ref(SplitType.EQUAL);
-
-  const getPersonById = peopleStore.getPersonById;
 
   function addBill() {
     bills.value.push(blankBill());
@@ -63,17 +61,18 @@ export const useBillsStore = defineStore('bills', () => {
     }, {});
   });
 
-  const allDebtsByPersonId = computed(() =>
-    peopleStore.people.reduce((acc: DebtStructures, person: Person) => {
+  const allDebtsByPersonId = computed(() => {
+    const peopleStore = usePeopleStore();
+    return peopleStore.people.reduce((acc: DebtStructures, person: Person) => {
       const debts = getDebtsByPersonId(person.id);
       if (Object.keys(debts).length) {
         return { ...acc, [person.id]: debts };
       }
       return acc;
-    }, {})
-  );
+    }, {});
+  });
 
-  const getDebtsByPersonId = (personId: Person['id']) => {
+  function getDebtsByPersonId(personId: Person['id']) {
     const debtsObject = billsMonthly.value.reduce((acc: DebtStructure, bill: Bill) => {
       if (!bill.paidBy) return acc;
       if (!bill.belongsTo.length) return acc;
@@ -99,16 +98,17 @@ export const useBillsStore = defineStore('bills', () => {
       if (amount <= 0) return acc;
       return { ...acc, [creditorId]: amount };
     }, {});
-  };
+  }
 
   function getBillShare(bill: Bill, personId: Person['id']) {
+    const peopleStore = usePeopleStore();
     if (!bill.belongsTo.includes(personId)) return 0;
 
     if (splitType.value === SplitType.EQUAL) {
       return parseFloat((bill.cost / bill.belongsTo.length).toFixed(2));
     } else {
-      const income = getPersonById(personId)?.income;
-      const totalIncomesOfBillUsers = people.value.reduce((acc: number, person: Person) => {
+      const income = peopleStore.getPersonById(personId)?.income;
+      const totalIncomesOfBillUsers = peopleStore.people.reduce((acc: number, person: Person) => {
         if (bill.belongsTo.includes(person.id)) {
           return acc + person.income;
         }

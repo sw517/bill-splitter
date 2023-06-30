@@ -80,7 +80,6 @@ defineExpose({ showDeleteDialog });
         color="error"
         flat
         size="x-small"
-        :disabled="index === 0"
         data-vitest="person-list-item-button-delete"
         @click="onDelete"
       />

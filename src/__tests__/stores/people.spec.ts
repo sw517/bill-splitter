@@ -1,6 +1,8 @@
 import { describe, it, expect, beforeEach, test } from 'vitest';
 import { setActivePinia, createPinia } from 'pinia';
 import { usePeopleStore } from '@/stores/people';
+import { useBillsStore } from '@/stores/bills';
+import { BillFrequency } from '@/types/Bill';
 
 describe('Store: people', () => {
   beforeEach(() => {
@@ -67,6 +69,38 @@ describe('Store: people', () => {
       });
       peopleStore.deletePerson('id-123');
       expect(peopleStore.people).toHaveLength(0);
+    });
+
+    it('removes the persons ID from all bills', () => {
+      const peopleStore = usePeopleStore();
+      const billsStore = useBillsStore();
+      peopleStore.$patch({
+        people: [{ id: 'person-1', name: 'Jim', income: 2000 }],
+      });
+      billsStore.$patch({
+        bills: [
+          {
+            id: 'bill-1',
+            name: 'Rent',
+            cost: 1000,
+            frequency: BillFrequency.MONTHLY,
+            paidBy: 'person-1',
+            belongsTo: ['person-1'],
+          },
+        ],
+      });
+
+      peopleStore.deletePerson('person-1');
+      expect(billsStore.bills[0]).toEqual(
+        expect.objectContaining({
+          id: 'bill-1',
+          name: 'Rent',
+          cost: 1000,
+          frequency: BillFrequency.MONTHLY,
+          paidBy: undefined,
+          belongsTo: [],
+        })
+      );
     });
   });
 

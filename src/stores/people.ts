@@ -1,7 +1,8 @@
-import { ref, type Ref } from 'vue';
-import { defineStore } from 'pinia';
+import { computed, ref, type Ref } from 'vue';
+import { defineStore, storeToRefs } from 'pinia';
 import { v4 as uuidv4 } from 'uuid';
 import type { Person } from '@/types/Person';
+import { useBillsStore } from './bills';
 
 const blankPerson = ({ name = '', fallbackName = '', id = uuidv4(), income = 0 } = {}): Person => ({
   name,
@@ -37,7 +38,25 @@ export const usePeopleStore = defineStore('people', () => {
   }
 
   function deletePerson(id: Person['id']): void {
+    const billsStore = useBillsStore();
+    billsStore.bills.forEach((bill) => {
+      if (bill.paidBy === id) {
+        billsStore.editBill(bill.id, 'paidBy', undefined);
+      }
+      if (bill.belongsTo.includes(id)) {
+        billsStore.editBill(
+          bill.id,
+          'belongsTo',
+          bill.belongsTo.filter((personId) => personId !== id)
+        );
+      }
+    });
+
     people.value = people.value?.filter((person: Person) => person.id !== id);
+
+    if (defaultPayer.value === id) {
+      defaultPayer.value = people.value[0].id;
+    }
   }
 
   return { people, addPerson, editPerson, getPersonById, deletePerson, defaultPayer };
