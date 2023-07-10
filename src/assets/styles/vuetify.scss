@@ -5,6 +5,9 @@
   // $card-title-text-transform: uppercase,
 );
 
+.v-main {
+  padding-top: 0 !important;
+}
 
 .v-card-title {
   font-family: var(--custom-title-font);

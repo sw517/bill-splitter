@@ -85,8 +85,8 @@ defineExpose({ saveToLocalStorage, loadFromLocalStorage });
   <VApp>
     <VLayout>
       <NavigationBar />
-      <VMain class="px-4">
-        <PersonList class="mt-4 mb-1" />
+      <VMain class="px-4" scrollable>
+        <PersonList class="mt-14 mb-1" />
         <BillList class="mb-1" />
         <OutgoingsList class="mb-1" />
       </VMain>

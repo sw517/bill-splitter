@@ -9,14 +9,15 @@ const currencyOptions = Object.keys(Currency);
 
 <template>
   <VAppBar
-    class="navigation-bar position-fixed"
+    class="navigation-bar"
     density="compact"
     color="primary"
     scroll-behavior="collapse"
     scroll-threshold="10"
+    scroll-target=".v-main__scroller"
   >
     <template #prepend>
-      <VAppBarNavIcon icon="mdi-account" size="small" />
+      <VAppBarNavIcon icon="mdi-cog" size="small" />
     </template>
     <v-app-bar-title>
       <div class="flex items-center pr-4">
@@ -46,10 +47,6 @@ const currencyOptions = Object.keys(Currency);
 </template>
 
 <style lang="scss" scoped>
-.navigation-bar__title {
-  font-family: var(--custom-title-font);
-}
-
 .navigation-bar {
   :deep(.v-field__input) {
     min-height: var(--v-field-input-min-height);
@@ -57,5 +54,8 @@ const currencyOptions = Object.keys(Currency);
   :deep(.v-select__selection) {
     margin: 0;
   }
+}
+.navigation-bar__title {
+  font-family: var(--custom-title-font);
 }
 </style>
