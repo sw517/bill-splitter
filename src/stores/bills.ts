@@ -14,7 +14,7 @@ import { usePeopleStore } from './people';
 import { mergeWith as _mergeWith } from 'lodash-es';
 
 export const useBillsStore = defineStore('bills', () => {
-  const blankBill = (): Bill => {
+  function blankBill(): Bill {
     const peopleStore = usePeopleStore();
     return {
       id: uuidv4(),
@@ -24,7 +24,7 @@ export const useBillsStore = defineStore('bills', () => {
       belongsTo: peopleStore.people.map(({ id }) => id),
       paidBy: peopleStore.defaultPayer,
     };
-  };
+  }
 
   const bills: Ref<Bill[]> = ref([blankBill()]);
   const splitType: Ref<SplitType> = ref(SplitType.EQUAL);

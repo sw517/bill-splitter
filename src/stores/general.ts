@@ -4,9 +4,15 @@ import { Currency, CurrencyIcon } from '@/types/General';
 
 export const useGeneralStore = defineStore('general', () => {
   const currency: Ref<Currency | null> = ref(Currency.GBP);
+  const autosave: Ref<boolean> = ref(false);
 
   const currencyIcon = computed(() => {
     return currency.value ? CurrencyIcon[currency.value] : '';
   });
-  return { currency, currencyIcon };
+
+  function toggleAutosave(): void {
+    autosave.value = !autosave.value;
+  }
+
+  return { currency, currencyIcon, toggleAutosave, autosave };
 });

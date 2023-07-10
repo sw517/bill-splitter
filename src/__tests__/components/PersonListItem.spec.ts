@@ -4,10 +4,12 @@ import { mount } from '@vue/test-utils';
 import PersonListItem from '@/components/PersonListItem.vue';
 import { createVuetify } from 'vuetify';
 import { usePeopleStore } from '@/stores/people';
+import { useBillsStore } from '@/stores/bills';
+import { BillFrequency } from '@/types/Bill';
 const vuetify = createVuetify();
 
 const defaultPerson = ({
-  id = 'id-123',
+  id = 'person-1',
   name = 'Jim',
   income = 2000,
   fallbackName = 'Person #1',
@@ -104,10 +106,14 @@ describe('PersonListItem', () => {
     });
 
     it("deletes a person when the dialog's delete button is clicked", async () => {
-      const personToRemove = defaultPerson({ id: 'id-456' });
+      const personToRemove = defaultPerson({ id: 'person-2' });
       const peopleStore = usePeopleStore();
       peopleStore.$patch({
-        people: [defaultPerson({ id: 'id-123' }), personToRemove, defaultPerson({ id: 'id-789' })],
+        people: [
+          defaultPerson({ id: 'person-1' }),
+          personToRemove,
+          defaultPerson({ id: 'person-3' }),
+        ],
       });
       expect(peopleStore.people).toHaveLength(3);
 
@@ -122,6 +128,48 @@ describe('PersonListItem', () => {
       );
       await confirmDeleteButtonWrapper.trigger('click');
       expect(peopleStore.people).toHaveLength(2);
+    });
+
+    it('removes the persons ID from all bills', async () => {
+      const peopleStore = usePeopleStore();
+      const billsStore = useBillsStore();
+      peopleStore.$patch({
+        people: [{ id: 'person-1', name: 'Jim', income: 2000 }],
+      });
+      billsStore.$patch({
+        bills: [
+          {
+            id: 'bill-1',
+            name: 'Rent',
+            cost: 1000,
+            frequency: BillFrequency.MONTHLY,
+            paidBy: 'person-1',
+            belongsTo: ['person-1'],
+          },
+        ],
+      });
+
+      const wrapper = mount(PersonListItem, {
+        props: defaultProps(),
+        global: defaultGlobal(),
+      });
+      wrapper.vm.showDeleteDialog = true;
+      await wrapper.vm.$nextTick();
+      const confirmDeleteButtonWrapper = wrapper.findComponent(
+        '[data-vitest="person-list-item-button-confirm-delete"]'
+      );
+      await confirmDeleteButtonWrapper.trigger('click');
+
+      expect(billsStore.bills[0]).toEqual(
+        expect.objectContaining({
+          id: 'bill-1',
+          name: 'Rent',
+          cost: 1000,
+          frequency: BillFrequency.MONTHLY,
+          paidBy: undefined,
+          belongsTo: [],
+        })
+      );
     });
   });
 });

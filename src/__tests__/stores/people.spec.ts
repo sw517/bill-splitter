@@ -1,8 +1,7 @@
-import { describe, it, expect, beforeEach, test } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { setActivePinia, createPinia } from 'pinia';
 import { usePeopleStore } from '@/stores/people';
-import { useBillsStore } from '@/stores/bills';
-import { BillFrequency } from '@/types/Bill';
+import { useGeneralStore } from '@/stores/general';
 
 describe('Store: people', () => {
   beforeEach(() => {
@@ -26,9 +25,23 @@ describe('Store: people', () => {
       );
     });
 
-    it('creates two people during initialisation', () => {
+    it('creates two people during initialisation if data is not loaded from storage', () => {
       const peopleStore = usePeopleStore();
       expect(peopleStore.people).toHaveLength(2);
+      expect(peopleStore.people[0]).toEqual(
+        expect.objectContaining({
+          id: expect.any(String),
+          name: '',
+          income: 0,
+        })
+      );
+      expect(peopleStore.people[1]).toEqual(
+        expect.objectContaining({
+          id: expect.any(String),
+          name: '',
+          income: 0,
+        })
+      );
     });
   });
 
@@ -71,36 +84,18 @@ describe('Store: people', () => {
       expect(peopleStore.people).toHaveLength(0);
     });
 
-    it('removes the persons ID from all bills', () => {
+    it('sets a new defaultPayer if the deleted person was the defaultPayer and there is at least one person', () => {
       const peopleStore = usePeopleStore();
-      const billsStore = useBillsStore();
       peopleStore.$patch({
-        people: [{ id: 'person-1', name: 'Jim', income: 2000 }],
-      });
-      billsStore.$patch({
-        bills: [
-          {
-            id: 'bill-1',
-            name: 'Rent',
-            cost: 1000,
-            frequency: BillFrequency.MONTHLY,
-            paidBy: 'person-1',
-            belongsTo: ['person-1'],
-          },
+        defaultPayer: 'person-2',
+        people: [
+          { id: 'person-1', name: 'Jim', income: 2000 },
+          { id: 'person-2', name: 'Bob', income: 2000 },
+          { id: 'person-3', name: 'Bob', income: 2000 },
         ],
       });
-
-      peopleStore.deletePerson('person-1');
-      expect(billsStore.bills[0]).toEqual(
-        expect.objectContaining({
-          id: 'bill-1',
-          name: 'Rent',
-          cost: 1000,
-          frequency: BillFrequency.MONTHLY,
-          paidBy: undefined,
-          belongsTo: [],
-        })
-      );
+      peopleStore.deletePerson('person-2');
+      expect(peopleStore.defaultPayer).toEqual('person-1');
     });
   });
 

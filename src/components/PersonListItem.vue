@@ -2,6 +2,7 @@
 import { computed, ref, type Ref } from 'vue';
 import type { Person } from '@/types/Person';
 import { usePeopleStore } from '@/stores/people';
+import { useBillsStore } from '@/stores/bills';
 import { useGeneralStore } from '@/stores/general';
 import { storeToRefs } from 'pinia';
 
@@ -12,6 +13,7 @@ const props = defineProps<{
 
 const showDeleteDialog = ref(false);
 const { currencyIcon } = storeToRefs(useGeneralStore());
+const billsStore = useBillsStore();
 const peopleStore = usePeopleStore();
 const nameLabel = computed(() => {
   return `Person ${props.index + 1}`;
@@ -34,6 +36,19 @@ const onDelete = () => {
 
 const onDeleteConfirm = () => {
   peopleStore.deletePerson(props.person.id);
+
+  billsStore.bills.forEach((bill) => {
+    if (bill.paidBy === props.person.id) {
+      billsStore.editBill(bill.id, 'paidBy', undefined);
+    }
+    if (bill.belongsTo.includes(props.person.id)) {
+      billsStore.editBill(
+        bill.id,
+        'belongsTo',
+        bill.belongsTo.filter((personId) => personId !== props.person.id)
+      );
+    }
+  });
 };
 
 defineExpose({ showDeleteDialog });
