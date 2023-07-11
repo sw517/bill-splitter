@@ -4,7 +4,6 @@ import { mount } from '@vue/test-utils';
 import { type Bill, BillFrequency } from '@/types/Bill';
 import BillListItem from '@/components/BillListItem.vue';
 import { createVuetify } from 'vuetify';
-// import { useBillStore } from '@/stores/useBillStore';
 const vuetify = createVuetify();
 
 const defaultBill = ({

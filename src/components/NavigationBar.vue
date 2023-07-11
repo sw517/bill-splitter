@@ -17,7 +17,12 @@ const currencyOptions = Object.keys(Currency);
     scroll-target=".v-main__scroller"
   >
     <template #prepend>
-      <VAppBarNavIcon icon="mdi-cog" size="small" />
+      <VAppBarNavIcon
+        data-vitest="navigation-bar-button"
+        icon="mdi-cog"
+        size="small"
+        @click="$emit('settings-clicked')"
+      />
     </template>
     <v-app-bar-title>
       <div class="flex items-center pr-4">

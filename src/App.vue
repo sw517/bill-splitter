@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ref } from 'vue';
 import { onBeforeMount } from 'vue';
 import { useTheme } from 'vuetify';
 import { useGeneralStore } from './stores/general';
@@ -13,6 +14,8 @@ const theme = useTheme();
 const billsStore = useBillsStore();
 const peopleStore = usePeopleStore();
 const generalStore = useGeneralStore();
+
+const showSettingsDialog = ref(false);
 
 const saveToLocalStorage = () => {
   localStorage.setItem('general', JSON.stringify(generalStore.$state));
@@ -78,18 +81,24 @@ onBeforeMount(() => {
   }
 });
 
-defineExpose({ saveToLocalStorage, loadFromLocalStorage });
+defineExpose({ showSettingsDialog, saveToLocalStorage, loadFromLocalStorage });
 </script>
 
 <template>
   <VApp>
     <VLayout>
-      <NavigationBar />
+      <NavigationBar
+        @settings-clicked="showSettingsDialog = true"
+        data-vitest="app-navigation-bar"
+      />
       <VMain class="px-4" scrollable>
         <PersonList class="mt-14 mb-1" />
         <BillList class="mb-1" />
         <OutgoingsList class="mb-1" />
       </VMain>
+      <VDialog v-model:model-value="showSettingsDialog" data-vitest="app-dialog-settings">
+        hi
+      </VDialog>
     </VLayout>
   </VApp>
 </template>

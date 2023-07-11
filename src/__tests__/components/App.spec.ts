@@ -21,6 +21,13 @@ window.ResizeObserver = window.ResizeObserver || ResizeObserverStub;
 
 const defaultGlobal = () => ({
   plugins: [vuetify],
+  stubs: {
+    'navigation-bar': true,
+    'v-dialog': {
+      template: '<div v-if="modelValue"><slot></slot></div>',
+      props: ['modelValue'],
+    },
+  },
 });
 
 describe('PersonList', () => {
@@ -34,6 +41,15 @@ describe('PersonList', () => {
         global: defaultGlobal(),
       });
       expect(wrapper.findComponent({ name: 'VApp' }).exists()).toBe(true);
+    });
+
+    it('renders a VDialog if showSettingsDialog is true', async () => {
+      const wrapper = mount(App, {
+        global: defaultGlobal(),
+      });
+      wrapper.vm.showSettingsDialog = true;
+      await wrapper.vm.$nextTick();
+      expect(wrapper.find('[data-vitest="app-dialog-settings"]').exists()).toBe(true);
     });
   });
 
@@ -204,6 +220,15 @@ describe('PersonList', () => {
       expect(updatedLocalPeople && JSON.parse(updatedLocalPeople)).toEqual(
         expect.objectContaining({ defaultPayer: 'person-qwerty' })
       );
+    });
+  });
+
+  describe('events', () => {
+    it('sets "showSettingsDialog" to true when "settings-clicked" is emitted by NavigationBar', () => {
+      const wrapper = mount(App, { global: defaultGlobal() });
+      expect(wrapper.vm.showSettingsDialog).toEqual(false);
+      wrapper.find('[data-vitest="app-navigation-bar"]').trigger('settings-clicked');
+      expect(wrapper.vm.showSettingsDialog).toEqual(true);
     });
   });
 });
