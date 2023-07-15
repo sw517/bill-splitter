@@ -14,5 +14,10 @@ export const useGeneralStore = defineStore('general', () => {
     autosave.value = !autosave.value;
   }
 
-  return { currency, currencyIcon, toggleAutosave, autosave };
+  function $reset() {
+    currency.value = Currency.GBP;
+    autosave.value = false;
+  }
+
+  return { $reset, currency, currencyIcon, toggleAutosave, autosave };
 });

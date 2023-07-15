@@ -33,4 +33,16 @@ describe('Store: general', () => {
     generalStore.toggleAutosave();
     expect(generalStore.autosave).toBe(false);
   });
+
+  it('resets the store', () => {
+    const generalStore = useGeneralStore();
+    generalStore.$patch({
+      currency: Currency.EURO,
+      autosave: true,
+    });
+
+    generalStore.$reset();
+    expect(generalStore.currency).toEqual(Currency.GBP);
+    expect(generalStore.autosave).toBe(false);
+  });
 });

@@ -115,4 +115,31 @@ describe('Store: people', () => {
       );
     });
   });
+
+  it('resets the store', () => {
+    const peopleStore = usePeopleStore();
+    peopleStore.$patch({
+      defaultPayer: 'person-2',
+      people: [
+        { id: 'person-1', name: 'Jim', income: 2000 },
+        { id: 'person-2', name: 'Bob', income: 2000 },
+      ],
+    });
+
+    peopleStore.$reset();
+    expect(peopleStore.people).toHaveLength(2);
+    expect(peopleStore.people).toEqual([
+      expect.objectContaining({
+        id: expect.any(String),
+        name: '',
+        income: 0,
+      }),
+      expect.objectContaining({
+        id: expect.any(String),
+        name: '',
+        income: 0,
+      }),
+    ]);
+    expect(peopleStore.defaultPayer).toEqual(peopleStore.people[0].id);
+  });
 });

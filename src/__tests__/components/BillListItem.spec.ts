@@ -11,14 +11,15 @@ const defaultBill = ({
   name = 'Rent',
   cost = 1000,
   frequency = BillFrequency.MONTHLY,
-  ...args
-} = {}): Bill => ({
+  belongsTo = [],
+  paidBy = '',
+}: Partial<Bill> = {}): Bill => ({
   id,
   name,
   cost,
   frequency,
-  belongsTo: [],
-  ...args,
+  belongsTo,
+  paidBy,
 });
 
 const defaultProps = ({ bill = defaultBill(), index = 2 } = {}) => ({
@@ -116,6 +117,18 @@ describe('BillListItem', () => {
       );
       const frequencyInputElement = frequencyInputWrapper.find('input');
       expect((frequencyInputElement.element as HTMLInputElement).value).toBe(BillFrequency.MONTHLY);
+    });
+
+    it('renders an error icon if a bill is incomplete', async () => {
+      const wrapper = mount(BillListItem, {
+        global: defaultGlobal(),
+        props: defaultProps({
+          bill: defaultBill(),
+        }),
+      });
+      expect(wrapper.find('[data-vitest="bill-list-item-icon-error"]').exists()).toBe(true);
+      await wrapper.setProps({ bill: defaultBill({ paidBy: 'anyone', belongsTo: ['anyone'] }) });
+      expect(wrapper.find('[data-vitest="bill-list-item-icon-error"]').exists()).toBe(false);
     });
   });
 });

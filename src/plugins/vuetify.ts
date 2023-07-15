@@ -55,6 +55,9 @@ const vuetify = createVuetify({
       color: 'secondary',
       density: 'compact',
     },
+    VSwitch: {
+      color: 'secondary',
+    },
   },
 });
 

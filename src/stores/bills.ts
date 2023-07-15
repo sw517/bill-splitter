@@ -120,6 +120,11 @@ export const useBillsStore = defineStore('bills', () => {
     }
   }
 
+  function $reset() {
+    bills.value = [blankBill()];
+    splitType.value = SplitType.EQUAL;
+  }
+
   return {
     bills,
     addBill,
@@ -128,6 +133,7 @@ export const useBillsStore = defineStore('bills', () => {
     splitType,
     getBillShare,
     getDebtsByPersonId,
+    $reset,
     totalOutgoings,
     allDebtsByPersonId,
   };

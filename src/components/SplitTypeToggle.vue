@@ -9,10 +9,8 @@ const billStore = useBillsStore();
 <template>
   <div>
     <VSwitch
-      color="primary"
       v-model="billStore.splitType"
       label="Income Ratio"
-      inset
       :false-value="SplitType.EQUAL"
       :true-value="SplitType.RATIO"
     >

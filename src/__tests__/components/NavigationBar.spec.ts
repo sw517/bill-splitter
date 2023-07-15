@@ -56,10 +56,10 @@ describe('NavigationBar', () => {
         global: defaultGlobal(),
         slots: defaultSlots(),
       });
-      await wrapper.findComponent({ name: 'VAppBarNavIcon' }).trigger('click');
-      expect(
-        wrapper.findComponent({ name: 'NavigationBar' }).emitted('settings-clicked')
-      ).toHaveLength(1);
+
+      const appBarNavIcon = wrapper.findComponent({ name: 'VAppBarNavIcon' });
+      await appBarNavIcon.trigger('click');
+      expect(wrapper.findComponent(NavigationBar).emitted('settings-clicked')).toHaveLength(1);
     });
   });
 });

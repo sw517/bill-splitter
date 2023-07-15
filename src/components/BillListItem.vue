@@ -31,6 +31,13 @@ const peopleOptions = computed(() =>
   }))
 );
 
+const showError = computed(() => {
+  if (props.bill.belongsTo.length === 0 || !props.bill.paidBy) {
+    return true;
+  }
+  return false;
+});
+
 defineExpose({ showConfigureDialog });
 </script>
 
@@ -39,7 +46,7 @@ defineExpose({ showConfigureDialog });
     <!-- Todo: Show if bill is unaccounted for if a person is deleted -->
     <VCol cols="6">
       <VTextField
-        label="Bill description"
+        label="Description"
         :model-value="bill.name"
         hide-details
         data-vitest="bill-list-item-input-description"
@@ -60,12 +67,18 @@ defineExpose({ showConfigureDialog });
         </template>
       </VTextField>
     </VCol>
-    <VCol cols="2" sm="1" class="text-right">
+    <VCol cols="auto" sm="1" class="text-right">
+      <VIcon
+        v-if="showError"
+        icon="mdi-exclamation-thick"
+        color="error"
+        data-vitest="bill-list-item-icon-error"
+      />
       <VBtn
+        flat
         icon="mdi-cog"
         title="Configure bill"
         color="primary"
-        flat
         size="x-small"
         data-vitest="bill-list-item-button-configure"
         @click="showConfigureDialog = true"

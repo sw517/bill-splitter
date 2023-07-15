@@ -427,4 +427,46 @@ describe('Store: bills', () => {
       });
     });
   });
+
+  it('resets the store', () => {
+    const peopleStore = usePeopleStore();
+    peopleStore.$patch({
+      people: [
+        {
+          id: 'person-1',
+          name: 'Jim',
+          income: 2000,
+        },
+      ],
+      defaultPayer: 'person-2',
+    });
+
+    const billsStore = useBillsStore();
+    billsStore.$patch({
+      bills: [
+        {
+          id: 'bill-3',
+          name: 'Council Tax',
+          cost: 200,
+          paidBy: 'person-zyx',
+          belongsTo: ['person-xyz', 'person-zyx'],
+        },
+      ],
+      splitType: SplitType.RATIO,
+    });
+
+    billsStore.$reset();
+
+    expect(billsStore.bills).toEqual([
+      {
+        id: expect.any(String),
+        name: '',
+        cost: 0,
+        frequency: BillFrequency.MONTHLY,
+        belongsTo: ['person-1'],
+        paidBy: 'person-2',
+      },
+    ]);
+    expect(billsStore.splitType).toBe(SplitType.EQUAL);
+  });
 });

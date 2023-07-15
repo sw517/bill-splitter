@@ -44,7 +44,13 @@ export const usePeopleStore = defineStore('people', () => {
     }
   }
 
+  function $reset() {
+    people.value = [blankPerson(), blankPerson()];
+    defaultPayer.value = people.value[0].id;
+  }
+
   return {
+    $reset,
     people,
     addPerson,
     editPerson,

@@ -9,6 +9,9 @@ import PersonList from './components/PersonList.vue';
 import BillList from './components/BillList.vue';
 import OutgoingsList from './components/OutgoingsList.vue';
 import NavigationBar from './components/NavigationBar.vue';
+import SettingsDialog from './components/SettingsDialog.vue';
+import LoadStorageSnackbar from './components/LoadStorageSnackbar.vue';
+import UseStorageSnackbar from './components/UseStorageSnackbar.vue';
 const theme = useTheme();
 
 const billsStore = useBillsStore();
@@ -16,6 +19,8 @@ const peopleStore = usePeopleStore();
 const generalStore = useGeneralStore();
 
 const showSettingsDialog = ref(false);
+const showLoadStorageSnackbar = ref(false);
+const showUseStorageSnackbar = ref(false);
 
 const saveToLocalStorage = () => {
   localStorage.setItem('general', JSON.stringify(generalStore.$state));
@@ -79,9 +84,39 @@ onBeforeMount(() => {
       theme.global.name.value = 'customLightTheme';
     }
   }
+
+  if (
+    localStorage.getItem('general') ||
+    localStorage.getItem('bills') ||
+    localStorage.getItem('people')
+  ) {
+    showLoadStorageSnackbar.value = true;
+    loadFromLocalStorage();
+  } else {
+    showUseStorageSnackbar.value = true;
+  }
 });
 
-defineExpose({ showSettingsDialog, saveToLocalStorage, loadFromLocalStorage });
+const onClearStorageClicked = () => {
+  localStorage.clear();
+  generalStore.$reset();
+  peopleStore.$reset();
+  billsStore.$reset();
+  showLoadStorageSnackbar.value = false;
+};
+
+const onEnableAutosaveClicked = () => {
+  generalStore.autosave = true;
+  showUseStorageSnackbar.value = false;
+};
+
+defineExpose({
+  showLoadStorageSnackbar,
+  showSettingsDialog,
+  saveToLocalStorage,
+  loadFromLocalStorage,
+  onClearStorageClicked,
+});
 </script>
 
 <template>
@@ -96,9 +131,17 @@ defineExpose({ showSettingsDialog, saveToLocalStorage, loadFromLocalStorage });
         <BillList class="mb-1" />
         <OutgoingsList class="mb-1" />
       </VMain>
-      <VDialog v-model:model-value="showSettingsDialog" data-vitest="app-dialog-settings">
-        hi
-      </VDialog>
+      <SettingsDialog v-model:model-value="showSettingsDialog" data-vitest="app-dialog-settings" />
+      <LoadStorageSnackbar
+        v-model:model-value="showLoadStorageSnackbar"
+        data-vitest="app-snackbar-load-storage"
+        @clear-storage-clicked="onClearStorageClicked"
+      />
+      <UseStorageSnackbar
+        v-model:model-value="showUseStorageSnackbar"
+        data-vitest="app-snackbar-use-storage"
+        @enable-autosave-clicked="onEnableAutosaveClicked"
+      />
     </VLayout>
   </VApp>
 </template>

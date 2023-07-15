@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, test, expect, beforeEach, vi } from 'vitest';
 import { setActivePinia, createPinia } from 'pinia';
 import { mount } from '@vue/test-utils';
 import { createVuetify } from 'vuetify';
@@ -27,6 +27,11 @@ const defaultGlobal = () => ({
       template: '<div v-if="modelValue"><slot></slot></div>',
       props: ['modelValue'],
     },
+    'v-snackbar': {
+      template:
+        '<div v-if="modelValue"><slot name="default"></slot><slot name="actions"></slot></div>',
+      props: ['modelValue'],
+    },
   },
 });
 
@@ -50,6 +55,27 @@ describe('PersonList', () => {
       wrapper.vm.showSettingsDialog = true;
       await wrapper.vm.$nextTick();
       expect(wrapper.find('[data-vitest="app-dialog-settings"]').exists()).toBe(true);
+    });
+
+    it('renders the load-storage snackbar if local storage data is found', async () => {
+      localStorage.setItem('general', JSON.stringify({}));
+
+      const wrapper = mount(App, {
+        global: defaultGlobal(),
+      });
+      wrapper.vm.showLoadStorageSnackbar = true;
+      await wrapper.vm.$nextTick();
+      expect(wrapper.find('[data-vitest="app-snackbar-load-storage"]').exists()).toBe(true);
+    });
+
+    it('renders the use-storage snackbar if local storage data is not found', async () => {
+      localStorage.clear();
+
+      const wrapper = mount(App, {
+        global: defaultGlobal(),
+      });
+
+      expect(wrapper.find('[data-vitest="app-snackbar-use-storage"]').exists()).toBe(true);
     });
   });
 
@@ -229,6 +255,45 @@ describe('PersonList', () => {
       expect(wrapper.vm.showSettingsDialog).toEqual(false);
       wrapper.find('[data-vitest="app-navigation-bar"]').trigger('settings-clicked');
       expect(wrapper.vm.showSettingsDialog).toEqual(true);
+    });
+
+    it('resets the stores', () => {
+      const wrapper = mount(App, { global: defaultGlobal() });
+      const generalStore = useGeneralStore();
+      const peopleStore = usePeopleStore();
+      const billsStore = useBillsStore();
+
+      generalStore.$patch({ currency: Currency.USD, autosave: true });
+      peopleStore.$patch({
+        people: [{ id: 'person-2', name: 'Jim', income: 2000 }],
+        defaultPayer: 'person-2',
+      });
+      billsStore.$patch({
+        bills: [
+          {
+            id: 'bill-1',
+            name: 'Rent',
+            cost: 1000,
+            paidBy: 'person-1',
+            belongsTo: ['person-1', 'person-2'],
+          },
+        ],
+      });
+
+      wrapper.vm.onClearStorageClicked();
+      expect(generalStore.currency).toEqual(Currency.GBP);
+      expect(generalStore.autosave).toEqual(false);
+      expect(peopleStore.people[0].id).not.toBe('person-2');
+      expect(peopleStore.defaultPayer).not.toEqual('person-2');
+      expect(billsStore.bills[0].id).not.toBe('bill-1');
+    });
+
+    it('turns on autosave when enable-autosave is emitted from use-storage snackbar', () => {
+      const wrapper = mount(App, { global: defaultGlobal() });
+      const generalStore = useGeneralStore();
+      generalStore.$patch({ autosave: false });
+      wrapper.find('[data-vitest="app-snackbar-use-storage"]').trigger('enable-autosave');
+      expect(generalStore.autosave).toEqual(true);
     });
   });
 });
