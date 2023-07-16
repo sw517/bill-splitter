@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import BillListItem from '@/components/BillListItem.vue';
+
 import { useBillsStore } from '@/stores/bills';
 
 const billsStore = useBillsStore();

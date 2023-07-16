@@ -469,4 +469,58 @@ describe('Store: bills', () => {
     ]);
     expect(billsStore.splitType).toBe(SplitType.EQUAL);
   });
+
+  it('deletes a bill', () => {
+    const billsStore = useBillsStore();
+    billsStore.$patch({
+      bills: [
+        {
+          id: 'bill-1',
+          name: 'Rent',
+          cost: 1000,
+          frequency: BillFrequency.MONTHLY,
+          belongsTo: [],
+          paidBy: undefined,
+        },
+        {
+          id: 'bill-2',
+          name: 'Tax',
+          cost: 100,
+          frequency: BillFrequency.MONTHLY,
+          belongsTo: [],
+          paidBy: undefined,
+        },
+        {
+          id: 'bill-3',
+          name: 'Internet',
+          cost: 10,
+          frequency: BillFrequency.MONTHLY,
+          belongsTo: [],
+          paidBy: undefined,
+        },
+      ],
+    });
+
+    billsStore.deleteBill('bill-2');
+    expect(billsStore.bills).toEqual(
+      expect.arrayContaining([
+        {
+          id: 'bill-1',
+          name: 'Rent',
+          cost: 1000,
+          frequency: BillFrequency.MONTHLY,
+          belongsTo: [],
+          paidBy: undefined,
+        },
+        {
+          id: 'bill-3',
+          name: 'Internet',
+          cost: 10,
+          frequency: BillFrequency.MONTHLY,
+          belongsTo: [],
+          paidBy: undefined,
+        },
+      ])
+    );
+  });
 });

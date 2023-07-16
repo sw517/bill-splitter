@@ -292,7 +292,7 @@ describe('PersonList', () => {
       const wrapper = mount(App, { global: defaultGlobal() });
       const generalStore = useGeneralStore();
       generalStore.$patch({ autosave: false });
-      wrapper.find('[data-vitest="app-snackbar-use-storage"]').trigger('enable-autosave');
+      wrapper.find('[data-vitest="app-snackbar-use-storage"]').trigger('enable-autosave-clicked');
       expect(generalStore.autosave).toEqual(true);
     });
   });

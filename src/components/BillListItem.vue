@@ -38,12 +38,23 @@ const showError = computed(() => {
   return false;
 });
 
+const onBillDelete = () => {
+  billsStore.deleteBill(props.bill.id);
+  showConfigureDialog.value = false;
+};
+
+const belongsToEveryone = computed(() => {
+  if (props.bill.belongsTo.length === peopleOptions.value.length) {
+    return true;
+  }
+  return false;
+});
+
 defineExpose({ showConfigureDialog });
 </script>
 
 <template>
   <VRow class="flex items-center" dense>
-    <!-- Todo: Show if bill is unaccounted for if a person is deleted -->
     <VCol cols="6">
       <VTextField
         label="Description"
@@ -67,7 +78,7 @@ defineExpose({ showConfigureDialog });
         </template>
       </VTextField>
     </VCol>
-    <VCol cols="auto" sm="1" class="text-right">
+    <VCol cols="auto" class="text-right">
       <VIcon
         v-if="showError"
         icon="mdi-exclamation-thick"
@@ -111,7 +122,11 @@ defineExpose({ showConfigureDialog });
             multiple
             data-vitest="bill-list-item-input-belongsto"
             @update:modelValue="onInput($event, 'belongsTo')"
-          />
+          >
+            <template v-if="belongsToEveryone" #selection="{ item, index }">
+              <span v-if="index === 0"> Everyone </span>
+            </template>
+          </VSelect>
           <VSelect
             label="Paid by"
             :model-value="bill.paidBy"
@@ -122,7 +137,9 @@ defineExpose({ showConfigureDialog });
         </VCardText>
         <VCardActions class="flex justify-between">
           <VBtn @click="showConfigureDialog = false">Close</VBtn>
-          <VBtn variant="flat" color="error" prepend-icon="mdi-delete">Remove bill</VBtn>
+          <VBtn variant="flat" color="error" prepend-icon="mdi-delete" @click="onBillDelete"
+            >Remove bill</VBtn
+          >
         </VCardActions>
       </VCard>
     </VDialog>

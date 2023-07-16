@@ -13,12 +13,18 @@ const billStore = useBillsStore();
       label="Income Ratio"
       :false-value="SplitType.EQUAL"
       :true-value="SplitType.RATIO"
+      density="compact"
+      hide-details
     >
       <template #prepend>
-        <VLabel>Equal</VLabel>
+        <VLabel class="split-type-prepend-label">Equal</VLabel>
       </template>
     </VSwitch>
   </div>
 </template>
 
-<style scoped></style>
+<style lang="scss" scoped>
+.split-type-prepend-label {
+  padding-left: 0;
+}
+</style>

@@ -34,9 +34,15 @@ export const useBillsStore = defineStore('bills', () => {
   }
 
   function editBill<Key extends keyof Bill>(id: Bill['id'], field: Key, input: Bill[Key]): void {
-    const BillIndex: number = bills.value.findIndex((Bill: Bill) => Bill.id === id);
-    if (BillIndex === -1) return;
-    bills.value[BillIndex][field] = input;
+    const billIndex: number = bills.value.findIndex((Bill: Bill) => Bill.id === id);
+    if (billIndex === -1) return;
+    bills.value[billIndex][field] = input;
+  }
+
+  function deleteBill(id: Bill['id']) {
+    const billIndex: number = bills.value.findIndex((Bill: Bill) => Bill.id === id);
+    if (billIndex === -1) return;
+    bills.value.splice(billIndex, 1);
   }
 
   const billsMonthly: ComputedRef<Bill[]> = computed(() => {
@@ -129,6 +135,7 @@ export const useBillsStore = defineStore('bills', () => {
     bills,
     addBill,
     editBill,
+    deleteBill,
     billsMonthly,
     splitType,
     getBillShare,

@@ -7,11 +7,13 @@ import { useBillsStore } from './stores/bills';
 import { usePeopleStore } from './stores/people';
 import PersonList from './components/PersonList.vue';
 import BillList from './components/BillList.vue';
-import OutgoingsList from './components/OutgoingsList.vue';
+import SummaryTable from './components/SummaryTable.vue';
+import SplitTypeCard from './components/SplitTypeCard.vue';
 import NavigationBar from './components/NavigationBar.vue';
 import SettingsDialog from './components/SettingsDialog.vue';
 import LoadStorageSnackbar from './components/LoadStorageSnackbar.vue';
 import UseStorageSnackbar from './components/UseStorageSnackbar.vue';
+import DebtSummary from './components/DebtSummary.vue';
 const theme = useTheme();
 
 const billsStore = useBillsStore();
@@ -129,7 +131,9 @@ defineExpose({
       <VMain class="px-4" scrollable>
         <PersonList class="mt-14 mb-1" />
         <BillList class="mb-1" />
-        <OutgoingsList class="mb-1" />
+        <SplitTypeCard class="mb-1" />
+        <SummaryTable class="mb-1" />
+        <DebtSummary class="mb-1" />
       </VMain>
       <SettingsDialog v-model:model-value="showSettingsDialog" data-vitest="app-dialog-settings" />
       <LoadStorageSnackbar
