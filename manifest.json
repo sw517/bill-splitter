@@ -1,5 +1,6 @@
 {
   "name": "Bill Splitter",
+  "id": "bill-splitter",
   "display_override": ["fullscreen", "standalone", "window-controls-overlay"],
   "display": "fullscreen",
   "short_name": "Bill Splitter",
