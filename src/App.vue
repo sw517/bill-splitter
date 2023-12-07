@@ -15,7 +15,7 @@ import LoadStorageSnackbar from './components/LoadStorageSnackbar.vue';
 import UseStorageSnackbar from './components/UseStorageSnackbar.vue';
 import DebtSummary from './components/DebtSummary.vue';
 const theme = useTheme();
-const { mobile } = useDisplay()
+const { smAndDown } = useDisplay()
 
 const billsStore = useBillsStore();
 const peopleStore = usePeopleStore();
@@ -131,7 +131,7 @@ defineExpose({
       />
       <VMain class="px-4" scrollable>
         <VContainer class="p-0 md:p-2 mt-16">
-          <VRow :no-gutters="mobile">
+          <VRow :no-gutters="smAndDown">
             <VCol cols="12" md="6" class="mb-2 sm:mb-0">
               <PersonList />
             </VCol>

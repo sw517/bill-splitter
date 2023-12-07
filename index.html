@@ -14,7 +14,16 @@
     <link rel="apple-touch-icon" href="assets/icons/maskable/maskable_icon_2x512.png" /> -->
     <meta name="apple-mobile-web-app-status-bar" content="#52796f" />
     <meta name="theme-color" content="#52796f" />
-    <script>navigator.serviceWorker.register("sw.js")</script> 
+    <script>
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", function() {
+          navigator.serviceWorker
+            .register("/sw.js")
+            .then(res => console.log("service worker registered"))
+            .catch(err => console.log("service worker not registered\n", err))
+        })
+      }
+    </script> 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vite App</title>
   </head>
