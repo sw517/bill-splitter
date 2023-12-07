@@ -1,52 +1,17 @@
 # bill-splitter
 
-This template should help get you started developing with Vue 3 in Vite.
+A responsive web app (& PWA) to make bill splitting easy!
 
-## Recommended IDE Setup
+1. Add users and their incomes
+2. Add bills, these can be either shared or individual
+    - Adjust bill frequency
+    - Choose who should share a bill
+    - Select the person
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
+Built with TypeScript, Vue3, Pinia & Vuetify
 
-## Type Support for `.vue` Imports in TS
+[https://euphonious-concha-ca318a.netlify.app/](https://euphonious-concha-ca318a.netlify.app/)
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin) to make the TypeScript language service aware of `.vue` types.
-
-If the standalone TypeScript plugin doesn't feel fast enough to you, Volar has also implemented a [Take Over Mode](https://github.com/johnsoncodehk/volar/discussions/471#discussioncomment-1361669) that is more performant. You can enable it by the following steps:
-
-1. Disable the built-in TypeScript Extension
-    1) Run `Extensions: Show Built-in Extensions` from VSCode's command palette
-    2) Find `TypeScript and JavaScript Language Features`, right click and select `Disable (Workspace)`
-2. Reload the VSCode window by running `Developer: Reload Window` from the command palette.
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vitejs.dev/config/).
-
-## Project Setup
-
-```sh
-npm install
-```
-
-### Compile and Hot-Reload for Development
-
-```sh
-npm run dev
-```
-
-### Type-Check, Compile and Minify for Production
-
-```sh
-npm run build
-```
-
-### Run Unit Tests with [Vitest](https://vitest.dev/)
-
-```sh
-npm run test:unit
-```
-
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
-npm run lint
-```
+<img width="307" alt="Mobile-Screenshot" src="https://github.com/sw517/bill-splitter/assets/16246185/f44906f1-25b3-492d-a0e3-c197f3653a6a">
+<img width="305" alt="Bill-Edit" src="https://github.com/sw517/bill-splitter/assets/16246185/8965170b-883d-447e-9ed3-8487e3132164">
+<img width="1001" alt="Desktop-Screenshot" src="https://github.com/sw517/bill-splitter/assets/16246185/5c7c912c-c2f2-4d68-b12e-08bd7f6cdfc5">
