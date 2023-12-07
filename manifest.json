@@ -4,7 +4,7 @@
   "display_override": ["fullscreen", "standalone", "window-controls-overlay"],
   "display": "fullscreen",
   "short_name": "Bill Splitter",
-  "start_url": "The URL that should be loaded when your application is opened",
+  "start_url": "/",
   "description": "A simple app that takes makes splitting bills easy!",
   "lang": "en",
   "dir": "auto",
