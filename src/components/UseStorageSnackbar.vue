@@ -4,7 +4,7 @@ defineProps({
 });
 </script>
 <template>
-  <VSnackbar :model-value="modelValue" vertical timeout="-1">
+  <VSnackbar :model-value="modelValue" vertical timeout="-1" class="ml-2">
     <div class="flex">
       <div>
         <div class="text-subtitle-1 pb-2 font-bold">Enable saving on this device!</div>

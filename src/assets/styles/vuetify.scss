@@ -12,3 +12,7 @@
 .v-card-title {
   font-family: var(--custom-title-font);
 }
+
+.v-snackbar__wrapper {
+  min-width: 280px;
+}

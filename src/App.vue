@@ -129,11 +129,25 @@ defineExpose({
         data-vitest="app-navigation-bar"
       />
       <VMain class="px-4" scrollable>
-        <PersonList class="mt-14 mb-1" />
-        <BillList class="mb-1" />
-        <SplitTypeCard class="mb-1" />
-        <SummaryTable class="mb-1" />
-        <DebtSummary class="mb-1" />
+        <VContainer class="max-sm:p-0 mt-14">
+          <VRow>
+            <VCol cols="12" sm="6">
+              <PersonList class="mb-1" />
+            </VCol>
+            <VCol cols="12" sm="6">
+              <BillList class="mb-1" />
+            </VCol>
+            <VCol cols="12" sm="6" md="4">
+              <SplitTypeCard class="mb-1" />
+            </VCol>
+            <VCol cols="12" sm="6" md="4">
+              <SummaryTable class="mb-1" />
+            </VCol>
+            <VCol cols="12" sm="6" md="4">
+              <DebtSummary class="mb-1" />
+            </VCol>
+          </VRow>
+        </VContainer>
       </VMain>
       <SettingsDialog v-model:model-value="showSettingsDialog" data-vitest="app-dialog-settings" />
       <LoadStorageSnackbar

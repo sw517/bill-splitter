@@ -1,6 +1,7 @@
-<script setup lang="ts">
 import { computed } from 'vue';
+<script setup lang="ts">
 import { usePeopleStore } from '@/stores/people';
+import { computed } from 'vue';
 import { useBillsStore } from '@/stores/bills';
 import { useGeneralStore } from '@/stores/general';
 import type { Person } from '@/types/Person';
@@ -45,13 +46,20 @@ const debts = computed(() => {
 <template>
   <VCard title="Payments">
     <VCardText>
-      <div v-for="debt in debts" class="flex items-baseline mb-2">
-        <VChip class="mr-1">{{ debt.debtor }}</VChip>
-        <span>owes</span>
-        <VChip class="mx-1">{{ debt.creditor }}</VChip>
-        <VIcon size="sm" :icon="generalStore.currencyIcon" />
-        <span>{{ debt.amount }}</span>
-      </div>
+      <template v-if="debts?.length">
+        <div v-for="debt in debts" class="flex items-baseline mb-2">
+          <VChip class="mr-1">{{ debt.debtor }}</VChip>
+          <span>owes</span>
+          <VChip class="mx-1">{{ debt.creditor }}</VChip>
+          <VIcon size="sm" :icon="generalStore.currencyIcon" />
+          <span>{{ debt.amount }}</span>
+        </div>
+      </template>
+      <template v-else>
+        <p>
+          Add some bills to view expected payments...
+        </p>
+      </template>
     </VCardText>
   </VCard>
 </template>
