@@ -10,16 +10,21 @@ const blankPerson = ({ name = '', fallbackName = '', id = uuidv4(), income = 0 }
   income,
 });
 
+const fallbackIncrement = ref(0);
+const getFallbackIncrement = () => {
+  return fallbackIncrement.value += 1;
+}
+
 export const usePeopleStore = defineStore('people', () => {
   const people = ref([
-    blankPerson({ fallbackName: 'Person #1' }),
-    blankPerson({ fallbackName: 'Person #2' }),
+    blankPerson({ fallbackName: `Person #${getFallbackIncrement()}` }),
+    blankPerson({ fallbackName: `Person #${getFallbackIncrement()}` }),
   ]);
 
   const defaultPayer: Ref<Person['id']> = ref(people.value[0].id);
 
   function addPerson() {
-    people.value.push(blankPerson());
+    people.value.push(blankPerson({ fallbackName: `Person #${getFallbackIncrement()}` }));
   }
 
   function getPersonById(id: Person['id']): Person | undefined {

@@ -76,7 +76,7 @@ defineExpose({ showDeleteDialog });
     </VCol>
     <VCol>
       <VTextField
-        label="Income"
+        label="Annual Income"
         :model-value="person.income"
         type="number"
         hide-details
@@ -88,7 +88,7 @@ defineExpose({ showDeleteDialog });
         </template>
       </VTextField>
     </VCol>
-    <VCol cols="2" sm="1" class="text-right">
+    <VCol cols="auto" class="text-right">
       <VBtn
         icon="mdi-delete"
         title="Remove person"

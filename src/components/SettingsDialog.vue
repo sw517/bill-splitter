@@ -51,7 +51,7 @@ const currencyOptions = Object.keys(Currency);
       </VCardText>
       <VCardActions class="justify-between">
         <VBtn variant="text" @click="$emit('update:modelValue', false)"> Close </VBtn>
-        <VBtn variant="flat" color="error" data-vitest="settings-button-clear"> Clear data </VBtn>
+        <VBtn variant="flat" color="error" data-vitest="settings-button-clear" @click="$emit('clear-storage-clicked')"> Clear data </VBtn>
       </VCardActions>
     </VCard>
   </VDialog>
