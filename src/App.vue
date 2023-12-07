@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { onBeforeMount } from 'vue';
-import { useTheme } from 'vuetify';
+import { useTheme, useDisplay } from 'vuetify';
 import { useGeneralStore } from './stores/general';
 import { useBillsStore } from './stores/bills';
 import { usePeopleStore } from './stores/people';
@@ -15,6 +15,7 @@ import LoadStorageSnackbar from './components/LoadStorageSnackbar.vue';
 import UseStorageSnackbar from './components/UseStorageSnackbar.vue';
 import DebtSummary from './components/DebtSummary.vue';
 const theme = useTheme();
+const { mobile } = useDisplay()
 
 const billsStore = useBillsStore();
 const peopleStore = usePeopleStore();
@@ -129,27 +130,27 @@ defineExpose({
         data-vitest="app-navigation-bar"
       />
       <VMain class="px-4" scrollable>
-        <VContainer class="max-sm:p-0 mt-14">
-          <VRow>
-            <VCol cols="12" sm="6">
-              <PersonList class="mb-1" />
+        <VContainer class="p-0 md:p-2 mt-16">
+          <VRow :no-gutters="mobile">
+            <VCol cols="12" md="6" class="mb-2 sm:mb-0">
+              <PersonList />
             </VCol>
-            <VCol cols="12" sm="6">
-              <BillList class="mb-1" />
+            <VCol cols="12" md="6" class="mb-2 sm:mb-0">
+              <BillList />
             </VCol>
-            <VCol cols="12" sm="6" md="4">
-              <SplitTypeCard class="mb-1" />
+            <VCol cols="12" md="6" lg="4" class="mb-2 sm:mb-0">
+              <SplitTypeCard />
             </VCol>
-            <VCol cols="12" sm="6" md="4">
-              <SummaryTable class="mb-1" />
+            <VCol cols="12" md="6" lg="4" class="mb-2 sm:mb-0">
+              <SummaryTable />
             </VCol>
-            <VCol cols="12" sm="6" md="4">
-              <DebtSummary class="mb-1" />
+            <VCol cols="12" md="6" lg="4" class="mb-2 sm:mb-0">
+              <DebtSummary />
             </VCol>
           </VRow>
         </VContainer>
       </VMain>
-      <SettingsDialog v-model:model-value="showSettingsDialog" data-vitest="app-dialog-settings" />
+      <SettingsDialog v-model:model-value="showSettingsDialog" @clear-storage-clicked="onClearStorageClicked" data-vitest="app-dialog-settings" />
       <LoadStorageSnackbar
         v-model:model-value="showLoadStorageSnackbar"
         data-vitest="app-snackbar-load-storage"
