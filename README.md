@@ -1,6 +1,8 @@
 # bill-splitter
 
-A responsive web app (& PWA) to make bill splitting easy!
+A responsive web-app/PWA to make bill splitting easy!
+
+[Take a look](https://billsplitter.app/)
 
 1. Add users and their incomes
 2. Add bills, these can be either shared or individual
@@ -9,8 +11,6 @@ A responsive web app (& PWA) to make bill splitting easy!
     - Select the person
 
 Built with TypeScript, Vue3, Pinia & Vuetify
-
-[https://euphonious-concha-ca318a.netlify.app/](https://euphonious-concha-ca318a.netlify.app/)
 
 <img width="307" alt="Mobile-Screenshot" src="https://github.com/sw517/bill-splitter/assets/16246185/f44906f1-25b3-492d-a0e3-c197f3653a6a">
 <img width="305" alt="Bill-Edit" src="https://github.com/sw517/bill-splitter/assets/16246185/8965170b-883d-447e-9ed3-8487e3132164">
