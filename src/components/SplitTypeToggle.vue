@@ -17,14 +17,10 @@ const billStore = useBillsStore();
       hide-details
     >
       <template #prepend>
-        <VLabel class="split-type-prepend-label">Equal</VLabel>
+        <VLabel>Equal</VLabel>
       </template>
     </VSwitch>
   </div>
 </template>
 
-<style lang="scss" scoped>
-.split-type-prepend-label {
-  padding-left: 0;
-}
-</style>
+<style lang="scss" scoped></style>

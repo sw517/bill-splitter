@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import SplitTypeToggle from '@/components/SplitTypeToggle.vue';
 import { useGeneralStore } from '../stores/general';
 
 defineProps({
@@ -12,7 +13,7 @@ const currencyOptions = Object.keys(Currency);
 </script>
 
 <template>
-  <VDialog :model-value="modelValue" v-bind="$attrs">
+  <VDialog max-width="768" :model-value="modelValue" v-bind="$attrs">
     <VCard>
       <VCardTitle>Settings</VCardTitle>
       <VCardText>
@@ -48,10 +49,35 @@ const currencyOptions = Object.keys(Currency);
             </div>
           </template>
         </VSelect>
+        <VCard variant="outlined" class="mt-4 p-4">
+          <span>Default Split Type</span>
+          <VTooltip open-on-click location="top">
+            <template #activator="{ props }">
+              <VIcon v-bind="props" size="sm" class="ml-4">mdi-help-circle-outline</VIcon>
+            </template>
+            <div>
+              <p>This determines how the cost of bills is shared.</p>
+              <p>
+                If <strong>Income Ratio</strong> is selected, bills will be split unequally using
+                income.
+              </p>
+            </div>
+          </VTooltip>
+          <SplitTypeToggle />
+        </VCard>
       </VCardText>
-      <VCardActions class="justify-between">
-        <VBtn variant="text" @click="$emit('update:modelValue', false)"> Close </VBtn>
-        <VBtn variant="flat" color="error" data-vitest="settings-button-clear" @click="$emit('clear-storage-clicked')"> Clear data </VBtn>
+      <VCardActions class="justify-between px-6 py-4">
+        <VBtn
+          variant="flat"
+          color="error"
+          data-vitest="settings-button-clear"
+          @click="$emit('clear-storage-clicked')"
+        >
+          Clear data
+        </VBtn>
+        <VBtn variant="flat" color="primary" @click="$emit('update:modelValue', false)">
+          Close
+        </VBtn>
       </VCardActions>
     </VCard>
   </VDialog>

@@ -58,6 +58,7 @@ defineExpose({ showDeleteDialog });
   <VRow v-bind="$attrs" class="flex items-center" dense>
     <VCol cols="6">
       <VTextField
+        autofocus
         :label="nameLabel"
         :model-value="person.name"
         outlined
@@ -76,7 +77,7 @@ defineExpose({ showDeleteDialog });
     </VCol>
     <VCol>
       <VTextField
-        label="Annual Income"
+        label="Monthly Income"
         :model-value="person.income"
         type="number"
         hide-details

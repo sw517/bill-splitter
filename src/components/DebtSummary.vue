@@ -4,26 +4,20 @@ import { usePeopleStore } from '@/stores/people';
 import { computed } from 'vue';
 import { useBillsStore } from '@/stores/bills';
 import { useGeneralStore } from '@/stores/general';
-import type { Person } from '@/types/Person';
 
 const generalStore = useGeneralStore();
 const billsStore = useBillsStore();
 const peopleStore = usePeopleStore();
-
-const getNameById = (id: Person['id']) => {
-  const foundPerson = peopleStore.getPersonById(id);
-  return foundPerson?.name || foundPerson?.fallbackName;
-};
 
 const debts = computed(() => {
   if (!billsStore.allDebtsByPersonId) return [];
 
   return Object.entries(billsStore.allDebtsByPersonId).reduce(
     (acc: any, [debtorId, debtsStructure]) => {
-      const debtor = getNameById(debtorId);
+      const debtor = peopleStore.getNameById(debtorId);
       const debtorDebts = Object.entries(debtsStructure).reduce(
         (nestedAcc: any, [creditorId, amount]) => {
-          const creditor = getNameById(creditorId);
+          const creditor = peopleStore.getNameById(creditorId);
           const roundedAmount = Math.ceil(amount * 100) / 100;
           return [
             ...nestedAcc,
@@ -56,9 +50,7 @@ const debts = computed(() => {
         </div>
       </template>
       <template v-else>
-        <p>
-          Add some bills to view expected payments...
-        </p>
+        <p>Add some bills to view expected payments...</p>
       </template>
     </VCardText>
   </VCard>

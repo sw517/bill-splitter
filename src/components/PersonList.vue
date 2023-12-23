@@ -17,6 +17,7 @@ const addPerson = peopleStore.addPerson;
         :person="person"
         :index="index"
         data-vitest="person-list-item"
+        class="mb-3"
       />
       <VRow dense>
         <VCol />

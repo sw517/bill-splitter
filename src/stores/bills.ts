@@ -14,6 +14,8 @@ import { usePeopleStore } from './people';
 import { mergeWith as _mergeWith } from 'lodash-es';
 
 export const useBillsStore = defineStore('bills', () => {
+  const splitType: Ref<SplitType> = ref(SplitType.EQUAL);
+
   function blankBill(): Bill {
     const peopleStore = usePeopleStore();
     return {
@@ -23,11 +25,11 @@ export const useBillsStore = defineStore('bills', () => {
       frequency: BillFrequency.MONTHLY,
       belongsTo: peopleStore.people.map(({ id }) => id),
       paidBy: peopleStore.defaultPayer,
+      splitType: splitType.value,
     };
   }
 
   const bills: Ref<Bill[]> = ref([blankBill()]);
-  const splitType: Ref<SplitType> = ref(SplitType.EQUAL);
 
   function addBill() {
     bills.value.push(blankBill());
@@ -110,7 +112,7 @@ export const useBillsStore = defineStore('bills', () => {
     const peopleStore = usePeopleStore();
     if (!bill.belongsTo.includes(personId)) return 0;
 
-    if (splitType.value === SplitType.EQUAL) {
+    if (bill.splitType === SplitType.EQUAL) {
       return parseFloat((bill.cost / bill.belongsTo.length).toFixed(2));
     } else {
       const income = peopleStore.getPersonById(personId)?.income;

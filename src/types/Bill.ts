@@ -25,6 +25,7 @@ export interface Bill {
   name: string;
   cost: number;
   frequency: BillFrequency;
+  splitType: SplitType;
   belongsTo: Person['id'][];
   paidBy?: Person['id'];
 }

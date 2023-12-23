@@ -8,14 +8,13 @@ import { usePeopleStore } from './stores/people';
 import PersonList from './components/PersonList.vue';
 import BillList from './components/BillList.vue';
 import SummaryTable from './components/SummaryTable.vue';
-import SplitTypeCard from './components/SplitTypeCard.vue';
 import NavigationBar from './components/NavigationBar.vue';
 import SettingsDialog from './components/SettingsDialog.vue';
 import LoadStorageSnackbar from './components/LoadStorageSnackbar.vue';
 import UseStorageSnackbar from './components/UseStorageSnackbar.vue';
 import DebtSummary from './components/DebtSummary.vue';
 const theme = useTheme();
-const { smAndDown } = useDisplay()
+const { smAndDown } = useDisplay();
 
 const billsStore = useBillsStore();
 const peopleStore = usePeopleStore();
@@ -138,19 +137,20 @@ defineExpose({
             <VCol cols="12" md="6" class="mb-2 sm:mb-0">
               <BillList />
             </VCol>
-            <VCol cols="12" md="6" lg="4" class="mb-2 sm:mb-0">
-              <SplitTypeCard />
-            </VCol>
-            <VCol cols="12" md="6" lg="4" class="mb-2 sm:mb-0">
+            <VCol cols="12" md="6" class="mb-2 sm:mb-0">
               <SummaryTable />
             </VCol>
-            <VCol cols="12" md="6" lg="4" class="mb-2 sm:mb-0">
+            <VCol cols="12" md="6" class="mb-2 sm:mb-0">
               <DebtSummary />
             </VCol>
           </VRow>
         </VContainer>
       </VMain>
-      <SettingsDialog v-model:model-value="showSettingsDialog" @clear-storage-clicked="onClearStorageClicked" data-vitest="app-dialog-settings" />
+      <SettingsDialog
+        v-model:model-value="showSettingsDialog"
+        @clear-storage-clicked="onClearStorageClicked"
+        data-vitest="app-dialog-settings"
+      />
       <LoadStorageSnackbar
         v-model:model-value="showLoadStorageSnackbar"
         data-vitest="app-snackbar-load-storage"

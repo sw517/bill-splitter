@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { BillFrequency, type Bill } from '@/types/Bill';
+import { BillFrequency, type Bill, SplitType } from '@/types/Bill';
 import { useBillsStore } from '@/stores/bills';
 import { usePeopleStore } from '@/stores/people';
 import { useGeneralStore } from '@/stores/general';
@@ -14,6 +14,7 @@ const props = defineProps<{
 const billsStore = useBillsStore();
 const { currencyIcon } = storeToRefs(useGeneralStore());
 const { people } = storeToRefs(usePeopleStore());
+const { getNameById } = usePeopleStore();
 const showConfigureDialog = ref(false);
 
 const onInput = <Key extends keyof Bill>(input: Bill[Key], field: Key) => {
@@ -50,6 +51,20 @@ const belongsToEveryone = computed(() => {
   return false;
 });
 
+const getBillCostSuffix = (bill: Bill) => {
+  if (bill.frequency === BillFrequency.MONTHLY) {
+    return '/mo';
+  }
+  return '/yr';
+};
+
+const getBillSplitTypeIcon = (bill: Bill) => {
+  if (bill.splitType === SplitType.EQUAL) {
+    return 'mdi-scale-balance';
+  }
+  return 'mdi-scale-unbalanced';
+};
+
 defineExpose({ showConfigureDialog });
 </script>
 
@@ -57,6 +72,7 @@ defineExpose({ showConfigureDialog });
   <VRow class="flex items-center" dense>
     <VCol cols="6">
       <VTextField
+        autofocus
         label="Description"
         :model-value="bill.name"
         hide-details
@@ -75,6 +91,9 @@ defineExpose({ showConfigureDialog });
       >
         <template #prepend-inner>
           <VIcon size="x-small" :icon="currencyIcon" />
+        </template>
+        <template #append-inner>
+          <small class="text-gray-400">{{ getBillCostSuffix(bill) }}</small>
         </template>
       </VTextField>
     </VCol>
@@ -95,7 +114,59 @@ defineExpose({ showConfigureDialog });
         @click="showConfigureDialog = true"
       />
     </VCol>
-    <VDialog v-model:model-value="showConfigureDialog" data-vitest="bill-list-item-dialog">
+    <VCol cols="12">
+      <div class="text-gray-400 flex items-center">
+        <div class="flex items-center">
+          <VTooltip open-on-click location="top">
+            <template #activator="{ props }">
+              <VIcon
+                v-bind="props"
+                class="mr-2"
+                size="x-small"
+                :icon="getBillSplitTypeIcon(bill)"
+              />
+            </template>
+            <div>Split Type</div>
+          </VTooltip>
+          <small v-if="bill.splitType === SplitType.EQUAL">Equal split</small>
+          <small v-else>Ratio split</small>
+        </div>
+        <div class="flex items-center ml-6">
+          <VTooltip open-on-click location="top">
+            <template #activator="{ props }">
+              <VIcon
+                v-bind="props"
+                class="mr-2"
+                size="x-small"
+                icon="mdi-account-credit-card-outline"
+              />
+            </template>
+            <div>Paid by</div>
+          </VTooltip>
+          <small>{{ (bill.paidBy && getNameById(bill.paidBy)) || 'N/A' }}</small>
+        </div>
+        <div v-if="bill.belongsTo.length" class="flex items-center ml-6">
+          <VTooltip open-on-click location="top">
+            <template #activator="{ props }">
+              <VIcon v-bind="props" class="mr-2" size="x-small" icon="mdi-cash-multiple" />
+            </template>
+            <div>Bill belongs to</div>
+          </VTooltip>
+          <small v-if="bill.belongsTo.length === peopleOptions.length">Everyone</small>
+          <small v-else>
+            {{ getNameById(bill.belongsTo[0]) }}
+            <span v-if="bill.belongsTo.length > 1">+ {{ bill.belongsTo.length - 1 }}</span>
+          </small>
+        </div>
+      </div>
+    </VCol>
+
+    <!-- BILL SETTINGS -->
+    <VDialog
+      v-model:model-value="showConfigureDialog"
+      max-width="768px"
+      data-vitest="bill-list-item-dialog"
+    >
       <VCard>
         <VCardTitle class="flex justify-between">
           <span>
@@ -107,39 +178,80 @@ defineExpose({ showConfigureDialog });
           </span>
         </VCardTitle>
         <VCardText>
-          <VSelect
-            label="Frequency"
-            :model-value="bill.frequency"
-            :items="billFrequencyOptions"
-            data-vitest="bill-list-item-input-frequency"
-            @update:modelValue="onInput($event, 'frequency')"
-          />
-          <!-- Todo: Change input text to show 'Everyone' if all are selected -->
-          <VSelect
-            label="Belongs to"
-            :model-value="bill.belongsTo"
-            :items="peopleOptions"
-            multiple
-            data-vitest="bill-list-item-input-belongsto"
-            @update:modelValue="onInput($event, 'belongsTo')"
-          >
-            <template v-if="belongsToEveryone" #selection="{ item, index }">
-              <span v-if="index === 0"> Everyone </span>
-            </template>
-          </VSelect>
-          <VSelect
-            label="Paid by"
-            :model-value="bill.paidBy"
-            :items="peopleOptions"
-            data-vitest="bill-list-item-input-paidby"
-            @update:modelValue="onInput($event, 'paidBy')"
-          />
+          <VContainer fluid class="p-0">
+            <VRow>
+              <VCol cols="12" md="4">
+                <VSelect
+                  label="Frequency"
+                  :model-value="bill.frequency"
+                  :items="billFrequencyOptions"
+                  data-vitest="bill-list-item-input-frequency"
+                  @update:modelValue="onInput($event, 'frequency')"
+                  hide-details
+                />
+              </VCol>
+              <VCol cols="12" md="4">
+                <VSelect
+                  label="Belongs to"
+                  :model-value="bill.belongsTo"
+                  :items="peopleOptions"
+                  multiple
+                  data-vitest="bill-list-item-input-belongsto"
+                  hide-details
+                  @update:modelValue="onInput($event, 'belongsTo')"
+                >
+                  <template v-if="belongsToEveryone" #selection="{ index }">
+                    <span v-if="index === 0"> Everyone </span>
+                  </template>
+                </VSelect>
+              </VCol>
+              <VCol cols="12" md="4">
+                <VSelect
+                  label="Paid by"
+                  :model-value="bill.paidBy"
+                  :items="peopleOptions"
+                  data-vitest="bill-list-item-input-paidby"
+                  hide-details
+                  @update:modelValue="onInput($event, 'paidBy')"
+                />
+              </VCol>
+              <VCol cols="12">
+                <VCard variant="outlined" class="p-4">
+                  <span>Split Type</span>
+                  <VTooltip open-on-click location="top">
+                    <template #activator="{ props }">
+                      <VIcon v-bind="props" size="sm" class="ml-4">mdi-help-circle-outline</VIcon>
+                    </template>
+                    <div>
+                      <p>This determines how the cost of bills is shared.</p>
+                      <p>
+                        If <strong>Income Ratio</strong> is selected, bills will be split unequally
+                        using income.
+                      </p>
+                    </div>
+                  </VTooltip>
+                  <VSwitch
+                    v-model="bill.splitType"
+                    label="Income Ratio"
+                    :false-value="SplitType.EQUAL"
+                    :true-value="SplitType.RATIO"
+                    density="compact"
+                    hide-details
+                  >
+                    <template #prepend>
+                      <VLabel>Equal</VLabel>
+                    </template>
+                  </VSwitch>
+                </VCard>
+              </VCol>
+            </VRow>
+          </VContainer>
         </VCardText>
-        <VCardActions class="flex justify-between">
-          <VBtn @click="showConfigureDialog = false">Close</VBtn>
+        <VCardActions class="flex justify-between px-6 pb-6">
           <VBtn variant="flat" color="error" prepend-icon="mdi-delete" @click="onBillDelete"
             >Remove bill</VBtn
           >
+          <VBtn variant="flat" color="primary" @click="showConfigureDialog = false">Close</VBtn>
         </VCardActions>
       </VCard>
     </VDialog>

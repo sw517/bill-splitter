@@ -11,7 +11,7 @@ const addBill = billsStore.addBill;
 <template>
   <VCard title="Bills">
     <VContainer>
-      <BillListItem v-for="(bill, index) in bills" :bill="bill" :index="index" class="mb-1" />
+      <BillListItem v-for="(bill, index) in bills" :bill="bill" :index="index" class="mb-2" />
       <VRow dense>
         <VCol />
         <VCol cols="auto">

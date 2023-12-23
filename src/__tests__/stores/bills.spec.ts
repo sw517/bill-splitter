@@ -28,6 +28,7 @@ describe('Store: bills', () => {
           frequency: BillFrequency.MONTHLY,
           belongsTo: expect.any(Array),
           paidBy: expect.any(String),
+          splitType: SplitType.EQUAL,
         })
       );
     });
@@ -167,7 +168,6 @@ describe('Store: bills', () => {
         ],
       });
       billsStore.$patch({
-        splitType: SplitType.EQUAL,
         bills: [
           {
             id: '1',
@@ -176,6 +176,7 @@ describe('Store: bills', () => {
             cost: 900,
             paidBy: '1',
             belongsTo: ['1', '2'],
+            splitType: SplitType.EQUAL,
           },
         ],
       });
@@ -190,7 +191,19 @@ describe('Store: bills', () => {
     });
 
     test('when bill split is based on income ratio', () => {
-      billsStore.splitType = SplitType.RATIO;
+      billsStore.$patch({
+        bills: [
+          {
+            id: '1',
+            name: 'Rent',
+            frequency: BillFrequency.MONTHLY,
+            cost: 900,
+            paidBy: '1',
+            belongsTo: ['1', '2'],
+            splitType: SplitType.RATIO,
+          },
+        ],
+      });
       const bill = billsStore.bills[0];
       const person1 = peopleStore.people[0];
       const person2 = peopleStore.people[1];
@@ -199,7 +212,6 @@ describe('Store: bills', () => {
     });
 
     test('when bill split is based on income ratio with only one debtor', () => {
-      billsStore.splitType = SplitType.RATIO;
       billsStore.$patch({
         bills: [
           {
@@ -209,6 +221,7 @@ describe('Store: bills', () => {
             cost: 900,
             paidBy: '1',
             belongsTo: ['1'],
+            splitType: SplitType.RATIO,
           },
         ],
       });
@@ -327,7 +340,6 @@ describe('Store: bills', () => {
         ],
       });
       billsStore.$patch({
-        splitType: SplitType.EQUAL,
         bills: [
           {
             id: '1',
@@ -336,6 +348,7 @@ describe('Store: bills', () => {
             cost: 900,
             paidBy: '1',
             belongsTo: ['1', '2'],
+            splitType: SplitType.EQUAL,
           },
           {
             id: '2',
@@ -344,6 +357,7 @@ describe('Store: bills', () => {
             cost: 100,
             paidBy: '2',
             belongsTo: ['2', '3'],
+            splitType: SplitType.EQUAL,
           },
           {
             id: '3',
@@ -352,6 +366,7 @@ describe('Store: bills', () => {
             cost: 100,
             paidBy: '1',
             belongsTo: ['3'],
+            splitType: SplitType.EQUAL,
           },
           {
             id: '4',
@@ -360,6 +375,7 @@ describe('Store: bills', () => {
             cost: 10,
             paidBy: '1',
             belongsTo: ['1'],
+            splitType: SplitType.EQUAL,
           },
         ],
       });
@@ -377,7 +393,44 @@ describe('Store: bills', () => {
 
     test('when bill split is based on income ratio', () => {
       billsStore.$patch({
-        splitType: SplitType.RATIO,
+        bills: [
+          {
+            id: '1',
+            name: 'Rent',
+            frequency: BillFrequency.MONTHLY,
+            cost: 900,
+            paidBy: '1',
+            belongsTo: ['1', '2'],
+            splitType: SplitType.RATIO,
+          },
+          {
+            id: '2',
+            name: 'Pet Insurance',
+            frequency: BillFrequency.MONTHLY,
+            cost: 100,
+            paidBy: '2',
+            belongsTo: ['2', '3'],
+            splitType: SplitType.RATIO,
+          },
+          {
+            id: '3',
+            name: 'Phone Insurance',
+            frequency: BillFrequency.MONTHLY,
+            cost: 100,
+            paidBy: '1',
+            belongsTo: ['3'],
+            splitType: SplitType.RATIO,
+          },
+          {
+            id: '4',
+            name: 'Netflix',
+            frequency: BillFrequency.MONTHLY,
+            cost: 10,
+            paidBy: '1',
+            belongsTo: ['1'],
+            splitType: SplitType.RATIO,
+          },
+        ],
       });
       expect(billsStore.getDebtsByPersonId('2')).toEqual({
         '1': 300,
@@ -388,9 +441,49 @@ describe('Store: bills', () => {
       });
     });
 
+    test('when bill splits are a mix of equal and ratio', () => {
+      billsStore.$patch({
+        bills: [
+          {
+            id: '1',
+            name: 'Rent',
+            frequency: BillFrequency.MONTHLY,
+            cost: 900,
+            paidBy: '1',
+            belongsTo: ['1', '2'],
+            splitType: SplitType.RATIO,
+          },
+          {
+            id: '2',
+            name: 'Pet Insurance',
+            frequency: BillFrequency.MONTHLY,
+            cost: 100,
+            paidBy: '2',
+            belongsTo: ['2', '3'],
+            splitType: SplitType.EQUAL,
+          },
+          {
+            id: '3',
+            name: 'Internet',
+            frequency: BillFrequency.MONTHLY,
+            cost: 20,
+            paidBy: '1',
+            belongsTo: ['1', '3'],
+            splitType: SplitType.RATIO,
+          },
+        ],
+      });
+      expect(billsStore.getDebtsByPersonId('2')).toEqual({
+        '1': 300,
+      });
+      expect(billsStore.getDebtsByPersonId('3')).toEqual({
+        '1': 7.5,
+        '2': 50,
+      });
+    });
+
     test('debts can be cancelled out', () => {
       billsStore.$patch({
-        splitType: SplitType.EQUAL,
         bills: [
           {
             id: '1',
@@ -399,6 +492,7 @@ describe('Store: bills', () => {
             cost: 100,
             paidBy: '1',
             belongsTo: ['1', '2'],
+            splitType: SplitType.EQUAL,
           },
           {
             id: '2',
@@ -407,6 +501,7 @@ describe('Store: bills', () => {
             cost: 100,
             paidBy: '2',
             belongsTo: ['1', '2'],
+            splitType: SplitType.EQUAL,
           },
         ],
       });
@@ -465,6 +560,7 @@ describe('Store: bills', () => {
         frequency: BillFrequency.MONTHLY,
         belongsTo: ['person-1'],
         paidBy: 'person-2',
+        splitType: SplitType.RATIO,
       },
     ]);
     expect(billsStore.splitType).toBe(SplitType.EQUAL);
