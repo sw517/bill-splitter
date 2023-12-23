@@ -17,7 +17,14 @@ const billStore = useBillsStore();
       hide-details
     >
       <template #prepend>
-        <VLabel>Equal</VLabel>
+        <VLabel>
+          <VIcon icon="mdi-scale-balance" size="small" class="mr-2" />
+          <span>Equal</span>
+        </VLabel>
+      </template>
+      <template #label>
+        <span>Income Ratio</span>
+        <VIcon icon="mdi-scale-unbalanced" size="small" class="ml-2" />
       </template>
     </VSwitch>
   </div>

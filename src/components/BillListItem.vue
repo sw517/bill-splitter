@@ -5,6 +5,7 @@ import { usePeopleStore } from '@/stores/people';
 import { useGeneralStore } from '@/stores/general';
 import { storeToRefs } from 'pinia';
 import { computed, ref } from 'vue';
+import billAutocompleteItems from '@/assets/data/bill-autocomplete-items';
 
 const props = defineProps<{
   bill: Bill;
@@ -71,20 +72,24 @@ defineExpose({ showConfigureDialog });
 <template>
   <VRow class="flex items-center" dense>
     <VCol cols="6">
-      <VTextField
+      <VCombobox
         autofocus
         label="Description"
         :model-value="bill.name"
         hide-details
         data-vitest="bill-list-item-input-description"
+        :items="billAutocompleteItems"
+        item-title="value"
+        item-value="value"
         @update:modelValue="onInput($event, 'name')"
-      />
+      >
+      </VCombobox>
     </VCol>
     <VCol>
       <VTextField
         label="Cost"
         :model-value="bill.cost"
-        type="number"
+        input-type="number"
         hide-details
         data-vitest="bill-list-item-input-cost"
         @update:modelValue="onInput(Number($event), 'cost')"
@@ -134,12 +139,7 @@ defineExpose({ showConfigureDialog });
         <div class="flex items-center ml-6">
           <VTooltip open-on-click location="top">
             <template #activator="{ props }">
-              <VIcon
-                v-bind="props"
-                class="mr-2"
-                size="x-small"
-                icon="mdi-account-credit-card-outline"
-              />
+              <VIcon v-bind="props" class="mr-2" size="small" icon="mdi-bank-transfer-out" />
             </template>
             <div>Paid by</div>
           </VTooltip>
@@ -148,7 +148,7 @@ defineExpose({ showConfigureDialog });
         <div v-if="bill.belongsTo.length" class="flex items-center ml-6">
           <VTooltip open-on-click location="top">
             <template #activator="{ props }">
-              <VIcon v-bind="props" class="mr-2" size="x-small" icon="mdi-cash-multiple" />
+              <VIcon v-bind="props" class="mr-2" size="x-small" icon="mdi-account-group" />
             </template>
             <div>Bill belongs to</div>
           </VTooltip>
@@ -186,8 +186,19 @@ defineExpose({ showConfigureDialog });
                   :model-value="bill.frequency"
                   :items="billFrequencyOptions"
                   data-vitest="bill-list-item-input-frequency"
-                  @update:modelValue="onInput($event, 'frequency')"
                   hide-details
+                  @update:modelValue="onInput($event, 'frequency')"
+                />
+              </VCol>
+              <VCol cols="12" md="4">
+                <VSelect
+                  label="Paid by"
+                  :model-value="bill.paidBy"
+                  :items="peopleOptions"
+                  data-vitest="bill-list-item-input-paidby"
+                  prepend-inner-icon="mdi-bank-transfer-out"
+                  hide-details
+                  @update:modelValue="onInput($event, 'paidBy')"
                 />
               </VCol>
               <VCol cols="12" md="4">
@@ -198,22 +209,13 @@ defineExpose({ showConfigureDialog });
                   multiple
                   data-vitest="bill-list-item-input-belongsto"
                   hide-details
+                  prepend-inner-icon="mdi-account-group"
                   @update:modelValue="onInput($event, 'belongsTo')"
                 >
                   <template v-if="belongsToEveryone" #selection="{ index }">
                     <span v-if="index === 0"> Everyone </span>
                   </template>
                 </VSelect>
-              </VCol>
-              <VCol cols="12" md="4">
-                <VSelect
-                  label="Paid by"
-                  :model-value="bill.paidBy"
-                  :items="peopleOptions"
-                  data-vitest="bill-list-item-input-paidby"
-                  hide-details
-                  @update:modelValue="onInput($event, 'paidBy')"
-                />
               </VCol>
               <VCol cols="12">
                 <VCard variant="outlined" class="p-4">
@@ -232,14 +234,20 @@ defineExpose({ showConfigureDialog });
                   </VTooltip>
                   <VSwitch
                     v-model="bill.splitType"
-                    label="Income Ratio"
                     :false-value="SplitType.EQUAL"
                     :true-value="SplitType.RATIO"
                     density="compact"
                     hide-details
                   >
                     <template #prepend>
-                      <VLabel>Equal</VLabel>
+                      <VLabel>
+                        <VIcon icon="mdi-scale-balance" size="small" class="mr-2" />
+                        <span>Equal</span>
+                      </VLabel>
+                    </template>
+                    <template #label>
+                      <span>Income Ratio</span>
+                      <VIcon icon="mdi-scale-unbalanced" size="small" class="ml-2" />
                     </template>
                   </VSwitch>
                 </VCard>
