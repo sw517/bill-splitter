@@ -5,7 +5,7 @@ defineProps({
 </script>
 
 <template>
-  <VSnackbar :model-value="modelValue" vertical timeout="10000">
+  <VSnackbar :model-value="modelValue" vertical timeout="10000" max-width="95vw" width="420">
     <div class="flex">
       <div>
         <div class="text-subtitle-1 pb-2 font-bold">Session restored</div>

@@ -82,30 +82,36 @@ describe('PersonListItem', () => {
       expect((incomeInputElement.element as HTMLInputElement).value).toBe('2000');
     });
 
-    it('renders a delete button', () => {
+    it('renders a settings button', () => {
       const wrapper = mount(PersonListItem, {
         props: defaultProps(),
         global: defaultGlobal(),
       });
-      expect(wrapper.find('[data-vitest="person-list-item-button-delete"]').exists()).toBe(true);
+      expect(wrapper.find('[data-vitest="person-list-item-button-settings"]').exists()).toBe(true);
     });
   });
 
   describe('Deleting a person', () => {
-    it('opens a confirmation dialog when the delete button is clicked', async () => {
+    it('opens the settings dialog when settings button is clicked', async () => {
+      const peopleStore = usePeopleStore();
+      peopleStore.$patch({
+        people: [defaultPerson({ id: 'person-1' }), defaultPerson({ id: 'person-2' })],
+      });
+
       const wrapper = mount(PersonListItem, {
-        props: defaultProps(),
+        props: defaultProps({ person: peopleStore.people[0] }),
         global: defaultGlobal(),
       });
-      expect(wrapper.find('[data-vitest="person-list-item-dialog-delete"]').exists()).toBe(false);
-      const deleteButtonWrapper = wrapper.findComponent(
-        '[data-vitest="person-list-item-button-delete"]'
+      wrapper.vm.showSettingsDialog = true;
+      await wrapper.vm.$nextTick();
+      const settingsDialogTrigger = wrapper.findComponent(
+        '[data-vitest="person-list-item-button-settings"]'
       );
-      await deleteButtonWrapper.trigger('click');
-      expect(wrapper.find('[data-vitest="person-list-item-dialog-delete"]').exists()).toBe(true);
+      await settingsDialogTrigger.trigger('click');
+      expect(wrapper.findComponent({ name: 'PersonSettingsDialog' }).exists()).toBe(true);
     });
 
-    it("deletes a person when the dialog's delete button is clicked", async () => {
+    it('deletes a person when the dialog confirm button is clicked', async () => {
       const personToRemove = defaultPerson({ id: 'person-2' });
       const peopleStore = usePeopleStore();
       peopleStore.$patch({
@@ -121,13 +127,20 @@ describe('PersonListItem', () => {
         props: defaultProps({ person: personToRemove }),
         global: defaultGlobal(),
       });
-      wrapper.vm.showDeleteDialog = true;
+      wrapper.vm.showSettingsDialog = true;
       await wrapper.vm.$nextTick();
-      const confirmDeleteButtonWrapper = wrapper.findComponent(
-        '[data-vitest="person-list-item-button-confirm-delete"]'
-      );
-      await confirmDeleteButtonWrapper.trigger('click');
+
+      await wrapper
+        .findComponent('[data-vitest="person-list-item-button-settings"]')
+        .trigger('click');
+      await wrapper
+        .findComponent('[data-vitest="person-settings-dialog-delete-button"]')
+        .trigger('click');
+      await wrapper
+        .findComponent('[data-vitest="person-list-item-button-confirm-delete"]')
+        .trigger('click');
       expect(peopleStore.people).toHaveLength(2);
+      expect(peopleStore.people.find(({ id }) => id === personToRemove.id)).toBeUndefined();
     });
 
     it('removes the persons ID from all bills', async () => {
@@ -153,12 +166,18 @@ describe('PersonListItem', () => {
         props: defaultProps(),
         global: defaultGlobal(),
       });
-      wrapper.vm.showDeleteDialog = true;
+      wrapper.vm.showSettingsDialog = true;
       await wrapper.vm.$nextTick();
-      const confirmDeleteButtonWrapper = wrapper.findComponent(
-        '[data-vitest="person-list-item-button-confirm-delete"]'
-      );
-      await confirmDeleteButtonWrapper.trigger('click');
+
+      await wrapper
+        .findComponent('[data-vitest="person-list-item-button-settings"]')
+        .trigger('click');
+      await wrapper
+        .findComponent('[data-vitest="person-settings-dialog-delete-button"]')
+        .trigger('click');
+      await wrapper
+        .findComponent('[data-vitest="person-list-item-button-confirm-delete"]')
+        .trigger('click');
 
       expect(billsStore.bills[0]).toEqual(
         expect.objectContaining({

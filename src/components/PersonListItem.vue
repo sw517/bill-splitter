@@ -1,20 +1,19 @@
 <script setup lang="ts">
-import { computed, ref, type Ref } from 'vue';
+import { computed, ref } from 'vue';
 import type { Person } from '@/types/Person';
 import { usePeopleStore } from '@/stores/people';
-import { useBillsStore } from '@/stores/bills';
 import { useGeneralStore } from '@/stores/general';
 import { storeToRefs } from 'pinia';
+import PersonSettingsDialog from '@/components/PersonSettingsDialog.vue';
 
 const props = defineProps<{
   person: Person;
   index: number;
 }>();
 
-const showDeleteDialog = ref(false);
 const { currencyIcon } = storeToRefs(useGeneralStore());
-const billsStore = useBillsStore();
 const peopleStore = usePeopleStore();
+const showSettingsDialog = ref(false);
 const nameLabel = computed(() => {
   return `Person ${props.index + 1}`;
 });
@@ -30,36 +29,14 @@ const onNameInput = (input: Person['name']) => {
   onInput(input.trim(), 'name');
 };
 
-const onDelete = () => {
-  showDeleteDialog.value = true;
-};
-
-const onDeleteConfirm = () => {
-  peopleStore.deletePerson(props.person.id);
-
-  billsStore.bills.forEach((bill) => {
-    if (bill.paidBy === props.person.id) {
-      billsStore.editBill(bill.id, 'paidBy', undefined);
-    }
-    if (bill.belongsTo.includes(props.person.id)) {
-      billsStore.editBill(
-        bill.id,
-        'belongsTo',
-        bill.belongsTo.filter((personId) => personId !== props.person.id)
-      );
-    }
-  });
-};
-
-defineExpose({ showDeleteDialog });
+defineExpose({ showSettingsDialog });
 </script>
 
 <template>
   <VRow v-bind="$attrs" class="flex items-center" dense>
     <VCol cols="6">
       <VTextField
-        autofocus
-        :label="nameLabel"
+        :label="person.fallbackName"
         :model-value="person.name"
         outlined
         hide-details
@@ -79,7 +56,7 @@ defineExpose({ showDeleteDialog });
       <VTextField
         label="Monthly Income"
         :model-value="person.income"
-        type="number"
+        input-type="number"
         hide-details
         data-vitest="person-list-item-input-income"
         @update:modelValue="onInput(Number($event), 'income')"
@@ -91,32 +68,17 @@ defineExpose({ showDeleteDialog });
     </VCol>
     <VCol cols="auto" class="text-right">
       <VBtn
-        icon="mdi-delete"
-        title="Remove person"
-        color="error"
+        icon="mdi-cog"
+        title="Settings"
+        color="primary"
         flat
         size="x-small"
-        data-vitest="person-list-item-button-delete"
-        @click="onDelete"
+        data-vitest="person-list-item-button-settings"
+        @click="showSettingsDialog = true"
       />
     </VCol>
+    <PersonSettingsDialog v-model:model-value="showSettingsDialog" :person="person" />
   </VRow>
-  <VDialog v-model:model-value="showDeleteDialog" data-vitest="person-list-item-dialog-delete">
-    <VCard>
-      <VCardTitle>Remove Person</VCardTitle>
-      <VCardSubtitle>Are you sure you want to remove this person?</VCardSubtitle>
-      <VCardActions class="mt-1 justify-between">
-        <VBtn variant="text" @click="showDeleteDialog = false">Cancel</VBtn>
-        <VBtn
-          color="error"
-          variant="flat"
-          data-vitest="person-list-item-button-confirm-delete"
-          @click="onDeleteConfirm"
-          >Remove</VBtn
-        >
-      </VCardActions>
-    </VCard>
-  </VDialog>
 </template>
 
 <style lang="scss">

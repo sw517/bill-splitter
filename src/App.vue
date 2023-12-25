@@ -128,7 +128,7 @@ defineExpose({
         @settings-clicked="showSettingsDialog = true"
         data-vitest="app-navigation-bar"
       />
-      <VMain class="px-4" scrollable>
+      <VMain class="px-4 pb-10">
         <VContainer class="p-0 md:p-2 mt-16">
           <VRow :no-gutters="smAndDown">
             <VCol cols="12" md="6" class="mb-2 sm:mb-0">
@@ -146,6 +146,7 @@ defineExpose({
           </VRow>
         </VContainer>
       </VMain>
+
       <SettingsDialog
         v-model:model-value="showSettingsDialog"
         @clear-storage-clicked="onClearStorageClicked"

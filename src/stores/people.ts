@@ -2,6 +2,7 @@ import { ref, type Ref } from 'vue';
 import { defineStore } from 'pinia';
 import { v4 as uuidv4 } from 'uuid';
 import type { Person } from '@/types/Person';
+import { truncate } from 'lodash-es';
 
 const blankPerson = ({ name = '', fallbackName = '', id = uuidv4(), income = 0 } = {}): Person => ({
   name,
@@ -10,26 +11,22 @@ const blankPerson = ({ name = '', fallbackName = '', id = uuidv4(), income = 0 }
   income,
 });
 
-const fallbackIncrement = ref(0);
-const getFallbackIncrement = () => {
-  return (fallbackIncrement.value += 1);
-};
-
 export const usePeopleStore = defineStore('people', () => {
   const people = ref([
-    blankPerson({ fallbackName: `Person #${getFallbackIncrement()}` }),
-    blankPerson({ fallbackName: `Person #${getFallbackIncrement()}` }),
+    blankPerson({ fallbackName: 'Person #1' }),
+    blankPerson({ fallbackName: 'Person #2' }),
   ]);
 
   const defaultPayer: Ref<Person['id']> = ref(people.value[0].id);
 
-  const getNameById = (id: Person['id']) => {
+  const getNameById = (id: Person['id'], truncateLength: number = 0) => {
     const foundPerson = getPersonById(id);
-    return foundPerson?.name || foundPerson?.fallbackName;
+    const name = foundPerson?.name || foundPerson?.fallbackName;
+    return truncateLength > 0 ? truncate(name, { length: truncateLength }) : name;
   };
 
   function addPerson() {
-    people.value.push(blankPerson({ fallbackName: `Person #${getFallbackIncrement()}` }));
+    people.value.push(blankPerson({ fallbackName: `Person #${people.value.length + 1}` }));
   }
 
   function getPersonById(id: Person['id']): Person | undefined {
@@ -47,7 +44,12 @@ export const usePeopleStore = defineStore('people', () => {
   }
 
   function deletePerson(id: Person['id']): void {
-    people.value = people.value?.filter((person: Person) => person.id !== id);
+    people.value = people.value?.reduce((acc: Person[], person: Person) => {
+      if (person.id === id) {
+        return acc;
+      }
+      return [...acc, { ...person, fallbackName: `Person #${acc.length + 1}` }];
+    }, []);
 
     if (defaultPayer.value === id) {
       defaultPayer.value = people.value[0].id;
