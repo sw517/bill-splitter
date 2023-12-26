@@ -16,6 +16,7 @@ const props = defineProps<{
   currencyIcon: CurrencyIcon;
   people: Person[];
   descriptionAutocompleteItems: string[];
+  autofocus?: boolean;
 }>();
 
 const { editBill } = useBillsStore();
@@ -65,6 +66,7 @@ defineExpose({ showConfigureDialog });
         :model-value="bill.name"
         data-vitest="bill-list-item-input-description"
         hide-details
+        :autofocus="autofocus"
         @update:modelValue="onInput($event, 'name')"
       />
       <!-- TODO: Replace TextField when performance of Combobox is fixed -->

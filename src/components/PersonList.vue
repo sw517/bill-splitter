@@ -8,13 +8,22 @@ import { usePeopleStore } from '@/stores/people';
 
 const peopleStore = usePeopleStore();
 const { currencyIcon } = useGeneralStore();
-const addPerson = peopleStore.addPerson;
 const showSettingsDialog: Ref = ref(false);
 const personSelected: Ref<Person | undefined> = ref();
+const hasAddedNewPerson: Ref<boolean> = ref(false);
 
 const onPersonSettingsClick = (person: Person) => {
   personSelected.value = person;
   showSettingsDialog.value = true;
+};
+
+const handleAddPerson = () => {
+  peopleStore.addPerson();
+  hasAddedNewPerson.value = true;
+};
+
+const autofocus = (index: number) => {
+  return hasAddedNewPerson.value && index === peopleStore.people.length - 1;
 };
 </script>
 
@@ -29,12 +38,17 @@ const onPersonSettingsClick = (person: Person) => {
           data-vitest="person-list-item"
           :currency-icon="currencyIcon"
           class="mb-3"
+          :autofocus="autofocus(index)"
           @settings-click="onPersonSettingsClick"
         />
       </template>
     </VCardText>
     <VCardActions>
-      <VBtn prepend-icon="mdi-plus" data-vitest="person-list-button-add-person" @click="addPerson">
+      <VBtn
+        prepend-icon="mdi-plus"
+        data-vitest="person-list-button-add-person"
+        @click="handleAddPerson"
+      >
         Add person
       </VBtn>
     </VCardActions>

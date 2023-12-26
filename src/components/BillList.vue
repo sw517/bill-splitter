@@ -17,10 +17,20 @@ const { currencyIcon } = useGeneralStore();
 const { people } = storeToRefs(peopleStore);
 const billSelected: Ref<Bill | undefined> = ref();
 const showConfigureDialog: Ref<boolean> = ref(false);
+const hasAddedNewBill: Ref<boolean> = ref(false);
 
 const onBillSettingsClick = (bill: Bill) => {
   billSelected.value = bill;
   showConfigureDialog.value = true;
+};
+
+const handleAddBill = () => {
+  billsStore.addBill();
+  hasAddedNewBill.value = true;
+};
+
+const autofocus = (index: number) => {
+  return hasAddedNewBill.value && index === billsStore.bills.length - 1;
 };
 </script>
 
@@ -36,12 +46,13 @@ const onBillSettingsClick = (bill: Bill) => {
           :people="people"
           :description-autocomplete-items="billAutocompleteItems"
           class="mb-3"
+          :autofocus="autofocus(index)"
           @settings-click="onBillSettingsClick"
         />
       </template>
     </VCardText>
     <VCardActions>
-      <VBtn prepend-icon="mdi-plus" @click="billsStore.addBill"> Add bill </VBtn>
+      <VBtn prepend-icon="mdi-plus" @click="handleAddBill"> Add bill </VBtn>
     </VCardActions>
   </VCard>
   <BillSettingsDialog

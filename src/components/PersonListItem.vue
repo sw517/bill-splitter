@@ -12,6 +12,7 @@ const props = defineProps<{
   person: Person;
   index: number;
   currencyIcon: CurrencyIcon;
+  autofocus?: boolean;
 }>();
 
 const peopleStore = usePeopleStore();
@@ -41,6 +42,7 @@ const onNameInput = (input: Person['name']) => {
         outlined
         hide-details
         data-vitest="person-list-item-input-name"
+        :autofocus="autofocus"
         @update:modelValue="onNameInput($event)"
       >
         <template v-if="peopleStore.defaultPayer === person.id" #prepend-inner>

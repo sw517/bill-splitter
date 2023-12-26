@@ -5,6 +5,8 @@ import { ref } from 'vue';
 import { usePeopleStore } from '@/stores/people';
 import { useBillsStore } from '@/stores/bills';
 
+const emit = defineEmits(['update:modelValue']);
+
 const props = defineProps<{
   modelValue: boolean;
   person: Person;
@@ -35,13 +37,21 @@ const onDeleteConfirm = () => {
       );
     }
   });
+
+  showConfirmDelete.value = false;
+  emit('update:modelValue', false);
 };
 
 defineExpose({ showConfirmDelete });
 </script>
 
 <template>
-  <VDialog max-width="500" :model-value="modelValue" v-bind="$attrs">
+  <VDialog
+    max-width="500"
+    :model-value="modelValue"
+    v-bind="$attrs"
+    @update:model-value="emit('update:modelValue', false)"
+  >
     <VCard>
       <VCardTitle>{{ person.name }}</VCardTitle>
       <VCardText>
