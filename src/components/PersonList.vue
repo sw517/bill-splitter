@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { ref, type Ref } from 'vue';
+import { type Person } from '@/types/Person';
+import PersonSettingsDialog from '@/components/PersonSettingsDialog.vue';
 import PersonListItem from '@/components/PersonListItem.vue';
 import { useGeneralStore } from '@/stores/general';
 import { usePeopleStore } from '@/stores/people';
@@ -6,6 +9,13 @@ import { usePeopleStore } from '@/stores/people';
 const peopleStore = usePeopleStore();
 const { currencyIcon } = useGeneralStore();
 const addPerson = peopleStore.addPerson;
+const showSettingsDialog: Ref = ref(false);
+const personSelected: Ref<Person | undefined> = ref();
+
+const onPersonSettingsClick = (person: Person) => {
+  personSelected.value = person;
+  showSettingsDialog.value = true;
+};
 </script>
 
 <template>
@@ -19,6 +29,7 @@ const addPerson = peopleStore.addPerson;
           data-vitest="person-list-item"
           :currency-icon="currencyIcon"
           class="mb-3"
+          @settings-click="onPersonSettingsClick"
         />
       </template>
     </VCardText>
@@ -28,4 +39,10 @@ const addPerson = peopleStore.addPerson;
       </VBtn>
     </VCardActions>
   </VCard>
+  <PersonSettingsDialog
+    v-if="personSelected"
+    v-model:model-value="showSettingsDialog"
+    :person="personSelected"
+    :currency-icon="currencyIcon"
+  />
 </template>

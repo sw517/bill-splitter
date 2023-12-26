@@ -2,8 +2,11 @@
 import { computed, ref } from 'vue';
 import type { Person } from '@/types/Person';
 import { usePeopleStore } from '@/stores/people';
-import PersonSettingsDialog from '@/components/PersonSettingsDialog.vue';
 import type { CurrencyIcon } from '@/types/General';
+
+const emit = defineEmits<{
+  (e: 'settings-click', person: Person): void;
+}>();
 
 const props = defineProps<{
   person: Person;
@@ -12,7 +15,7 @@ const props = defineProps<{
 }>();
 
 const peopleStore = usePeopleStore();
-const showSettingsDialog = ref(false);
+
 const nameLabel = computed(() => {
   return `Person ${props.index + 1}`;
 });
@@ -27,8 +30,6 @@ const onNameInput = (input: Person['name']) => {
   }
   onInput(input.trim(), 'name');
 };
-
-defineExpose({ showSettingsDialog });
 </script>
 
 <template>
@@ -73,14 +74,9 @@ defineExpose({ showSettingsDialog });
         flat
         size="x-small"
         data-vitest="person-list-item-button-settings"
-        @click="showSettingsDialog = true"
+        @click="emit('settings-click', person)"
       />
     </VCol>
-    <PersonSettingsDialog
-      v-model:model-value="showSettingsDialog"
-      :person="person"
-      :currency-icon="currencyIcon"
-    />
   </VRow>
 </template>
 

@@ -52,6 +52,30 @@ describe('PersonList', () => {
     });
   });
 
+  describe('Editing a person', () => {
+    it('opens the settings dialog when settings button is clicked', async () => {
+      const peopleStore = usePeopleStore();
+      peopleStore.$patch({
+        people: [
+          defaultPerson({ id: 'id-123', name: 'Jim' }),
+          defaultPerson({ id: 'id-456', name: 'Bob' }),
+        ],
+      });
+      const wrapper = mount(PersonList, {
+        global: defaultGlobal(),
+      });
+
+      await wrapper
+        .findComponent({ name: 'PersonListItem' })
+        .vm.$emit('settings-click', peopleStore.people[0]);
+      await wrapper.vm.$nextTick();
+
+      expect(wrapper.findComponent({ name: 'PersonSettingsDialog' }).exists()).toBe(true);
+    });
+
+    // TODO: Write tests for confirming delete person
+  });
+
   describe('Events', () => {
     it('adds a person when the add person button is clicked', async () => {
       const peopleStore = usePeopleStore();
