@@ -1,8 +1,12 @@
+$screen-xxs-min: 0px;
+$screen-xxs-max: 400px;
+$screen-xs-min: 401px;
+$screen-xs-max: 639px;
+
 @use 'vuetify/settings' with (
   $color-pack: false,
   $utilities: false,
   $tooltip-background-color: rgba(var(--v-theme-surface-variant), 1),
-  // $card-title-text-transform: uppercase,
 );
 
 .v-main {
@@ -15,4 +19,19 @@
 
 .v-snackbar__wrapper {
   min-width: 280px;
+}
+
+.v-col--full-width-xxs-only {
+  @media (max-width: $screen-xxs-max) {
+    max-width: 100%;
+    width: 100%;
+    flex: 0 0 100%;
+    margin-bottom: 10px
+  }
+}
+
+.v-divider--xxs-only {
+  @media (min-width: $screen-xs-min) {
+    display: none;
+  }
 }

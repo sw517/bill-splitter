@@ -1,34 +1,30 @@
 <script setup lang="ts">
 import { BillFrequency, type Bill, SplitType } from '@/types/Bill';
+import { type Person } from '@/types/Person';
+import { type CurrencyIcon } from '@/types/General';
+import { computed, ref } from 'vue';
 import { useBillsStore } from '@/stores/bills';
 import { usePeopleStore } from '@/stores/people';
-import { useGeneralStore } from '@/stores/general';
-import { storeToRefs } from 'pinia';
-import { computed, ref } from 'vue';
-import billAutocompleteItems from '@/assets/data/bill-autocomplete-items';
 import BillSettingsDialog from '@/components/BillSettingsDialog.vue';
 
 const props = defineProps<{
   bill: Bill;
   index: number;
+  currencyIcon: CurrencyIcon;
+  people: Person[];
+  descriptionAutocompleteItems: string[];
 }>();
 
-const billsStore = useBillsStore();
-const { currencyIcon } = storeToRefs(useGeneralStore());
-const { people } = storeToRefs(usePeopleStore());
+const { editBill } = useBillsStore();
 const { getNameById } = usePeopleStore();
 const showConfigureDialog = ref(false);
 
 const onInput = <Key extends keyof Bill>(input: Bill[Key], field: Key) => {
-  billsStore.editBill(props.bill.id, field, input);
+  editBill(props.bill.id, field, input);
 };
 
-const billFrequencyOptions = (Object.keys(BillFrequency) as Array<keyof typeof BillFrequency>).map(
-  (key) => BillFrequency[key]
-);
-
 const peopleOptions = computed(() =>
-  people.value.map((person) => ({
+  props.people.map((person: Person) => ({
     title: person.name || person.fallbackName,
     value: person.id,
   }))
@@ -60,17 +56,24 @@ defineExpose({ showConfigureDialog });
 
 <template>
   <VRow class="bill-list-item flex items-center" dense>
-    <VCol cols="6">
-      <VCombobox
+    <VCol cols="6" class="v-col--full-width-xxs-only">
+      <VTextField
         label="Description"
-        placeholder="Description"
+        :model-value="bill.name"
+        data-vitest="bill-list-item-input-description"
+        hide-details
+        @update:modelValue="onInput($event, 'name')"
+      />
+      <!-- TODO: Replace TextField when performance of Combobox is fixed -->
+      <!-- <v-combobox
+        label="Description"
         :model-value="bill.name"
         hide-details
         data-vitest="bill-list-item-input-description"
-        :items="billAutocompleteItems"
+        :items="descriptionAutocompleteItems"
+        :menu-props="{ ...(!bill.name && { modelValue: false }) }"
         @update:modelValue="onInput($event, 'name')"
-      >
-      </VCombobox>
+      /> -->
     </VCol>
     <VCol>
       <VTextField
@@ -150,7 +153,12 @@ defineExpose({ showConfigureDialog });
       </div>
     </VCol>
 
-    <BillSettingsDialog v-model:modelValue="showConfigureDialog" :bill="bill" />
+    <BillSettingsDialog
+      v-model:modelValue="showConfigureDialog"
+      :bill="bill"
+      :currency-icon="currencyIcon"
+      :people="people"
+    />
   </VRow>
 </template>
 

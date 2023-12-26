@@ -71,6 +71,12 @@ const vuetify = createVuetify({
     VSwitch: {
       color: 'secondary',
     },
+    VRadioGroup: {
+      color: 'secondary',
+    },
+    VRadio: {
+      color: 'secondary',
+    },
   },
 });
 

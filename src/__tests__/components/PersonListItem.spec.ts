@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { setActivePinia, createPinia } from 'pinia';
 import { mount } from '@vue/test-utils';
+import { CurrencyIcon } from '@/types/General';
 import PersonListItem from '@/components/PersonListItem.vue';
 import { createVuetify } from 'vuetify';
 import { usePeopleStore } from '@/stores/people';
@@ -22,9 +23,15 @@ const defaultPerson = ({
   ...args,
 });
 
-const defaultProps = ({ person = defaultPerson(), index = 2, ...args } = {}) => ({
+const defaultProps = ({
+  person = defaultPerson(),
+  index = 2,
+  currencyIcon = CurrencyIcon.GBP,
+  ...args
+} = {}) => ({
   person,
   index,
+  currencyIcon,
   ...args,
 });
 

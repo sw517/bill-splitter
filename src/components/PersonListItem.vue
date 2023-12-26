@@ -2,16 +2,15 @@
 import { computed, ref } from 'vue';
 import type { Person } from '@/types/Person';
 import { usePeopleStore } from '@/stores/people';
-import { useGeneralStore } from '@/stores/general';
-import { storeToRefs } from 'pinia';
 import PersonSettingsDialog from '@/components/PersonSettingsDialog.vue';
+import type { CurrencyIcon } from '@/types/General';
 
 const props = defineProps<{
   person: Person;
   index: number;
+  currencyIcon: CurrencyIcon;
 }>();
 
-const { currencyIcon } = storeToRefs(useGeneralStore());
 const peopleStore = usePeopleStore();
 const showSettingsDialog = ref(false);
 const nameLabel = computed(() => {
@@ -34,7 +33,7 @@ defineExpose({ showSettingsDialog });
 
 <template>
   <VRow v-bind="$attrs" class="flex items-center" dense>
-    <VCol cols="6">
+    <VCol cols="6" class="v-col--full-width-xxs-only">
       <VTextField
         :label="person.fallbackName"
         :model-value="person.name"
@@ -77,7 +76,11 @@ defineExpose({ showSettingsDialog });
         @click="showSettingsDialog = true"
       />
     </VCol>
-    <PersonSettingsDialog v-model:model-value="showSettingsDialog" :person="person" />
+    <PersonSettingsDialog
+      v-model:model-value="showSettingsDialog"
+      :person="person"
+      :currency-icon="currencyIcon"
+    />
   </VRow>
 </template>
 

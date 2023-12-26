@@ -1,38 +1,33 @@
 <script setup lang="ts">
 import PersonListItem from '@/components/PersonListItem.vue';
+import { useGeneralStore } from '@/stores/general';
 import { usePeopleStore } from '@/stores/people';
 import { storeToRefs } from 'pinia';
 
 const peopleStore = usePeopleStore();
 const { people } = storeToRefs(peopleStore);
+const { currencyIcon } = useGeneralStore();
 const addPerson = peopleStore.addPerson;
 </script>
 
 <template>
   <VCard title="People">
-    <VContainer>
-      <PersonListItem
-        v-for="(person, index) in people"
-        :key="person.id"
-        :person="person"
-        :index="index"
-        data-vitest="person-list-item"
-        class="mb-3"
-      />
-      <VRow dense>
-        <VCol />
-        <VCol cols="auto">
-          <VBtn
-            flat
-            color="primary"
-            prepend-icon="mdi-plus"
-            data-vitest="person-list-button-add-person"
-            @click="addPerson"
-          >
-            Add person
-          </VBtn>
-        </VCol>
-      </VRow>
-    </VContainer>
+    <VCardText>
+      <template v-for="(person, index) in people" :key="person.id">
+        <VDivider v-if="index !== 0" class="mb-4 v-divider--xxs-only" />
+        <PersonListItem
+          :person="person"
+          :index="index"
+          data-vitest="person-list-item"
+          :currency-icon="currencyIcon"
+          class="mb-3"
+        />
+      </template>
+    </VCardText>
+    <VCardActions>
+      <VBtn prepend-icon="mdi-plus" data-vitest="person-list-button-add-person" @click="addPerson">
+        Add person
+      </VBtn>
+    </VCardActions>
   </VCard>
 </template>

@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import SplitTypeToggle from '@/components/SplitTypeToggle.vue';
+import SplitType from '@/components/SplitType.vue';
 import { useGeneralStore } from '../stores/general';
+import { useBillsStore } from '@/stores/bills';
 
+const billStore = useBillsStore();
 defineProps({
   modelValue: Boolean,
 });
@@ -50,20 +52,7 @@ const currencyOptions = Object.keys(Currency);
           </template>
         </VSelect>
         <VCard variant="outlined" class="mt-4 p-4">
-          <span>Default Split Type</span>
-          <VTooltip open-on-click location="top">
-            <template #activator="{ props }">
-              <VIcon v-bind="props" size="sm" class="ml-4">mdi-help-circle-outline</VIcon>
-            </template>
-            <div>
-              <p>This determines how the cost of bills is shared.</p>
-              <p>
-                If <strong>Income Ratio</strong> is selected, bills will be split unequally using
-                income.
-              </p>
-            </div>
-          </VTooltip>
-          <SplitTypeToggle />
+          <SplitType v-model:model-value="billStore.splitType" />
         </VCard>
       </VCardText>
       <VCardActions class="justify-between px-6 py-4">

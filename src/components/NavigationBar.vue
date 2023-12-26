@@ -12,7 +12,7 @@
     </template>
     <VAppBarTitle>
       <div class="flex items-center pr-4">
-        <div class="navigation-bar__title mr-4 grow">Bill Splitter</div>
+        <div class="navigation-bar__title mr-4 grow text-sm sm:text-lg">Bill Splitter</div>
         <a
           href="https://www.buymeacoffee.com/heavydusk0l"
           target="_blank"

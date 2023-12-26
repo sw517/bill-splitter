@@ -1,20 +1,20 @@
 <script setup lang="ts">
 import { BillFrequency, type Bill, SplitType } from '@/types/Bill';
+import { type Person } from '@/types/Person';
+import { type CurrencyIcon } from '@/types/General';
 import { useBillsStore } from '@/stores/bills';
-import { usePeopleStore } from '@/stores/people';
-import { useGeneralStore } from '@/stores/general';
-import { storeToRefs } from 'pinia';
 import { computed, ref } from 'vue';
+import SplitTypeRadio from '@/components/SplitType.vue';
 
 const emit = defineEmits(['update:modelValue']);
 const props = defineProps<{
   modelValue: boolean;
   bill: Bill;
+  currencyIcon: CurrencyIcon;
+  people: Person[];
 }>();
 
 const billsStore = useBillsStore();
-const { currencyIcon } = storeToRefs(useGeneralStore());
-const { people } = storeToRefs(usePeopleStore());
 const showDeleteConfirmDialog = ref(false);
 
 const onInput = <Key extends keyof Bill>(input: Bill[Key], field: Key) => {
@@ -26,7 +26,7 @@ const billFrequencyOptions = (Object.keys(BillFrequency) as Array<keyof typeof B
 );
 
 const peopleOptions = computed(() =>
-  people.value.map((person) => ({
+  props.people.map((person: Person) => ({
     title: person.name || person.fallbackName,
     value: person.id,
   }))
@@ -50,7 +50,12 @@ const belongsToEveryone = computed(() => {
 </script>
 
 <template>
-  <VDialog :model-value="modelValue" max-width="768px" data-vitest="bill-list-item-dialog">
+  <VDialog
+    :model-value="modelValue"
+    max-width="768px"
+    data-vitest="bill-list-item-dialog"
+    v-bind="$attrs"
+  >
     <VCard>
       <VCardTitle class="flex justify-between">
         <span class="whitespace-normal block mr-6">
@@ -103,37 +108,7 @@ const belongsToEveryone = computed(() => {
             </VCol>
             <VCol cols="12">
               <VCard variant="outlined" class="p-4">
-                <span>Split Type</span>
-                <VTooltip open-on-click location="top">
-                  <template #activator="{ props }">
-                    <VIcon v-bind="props" size="sm" class="ml-4">mdi-help-circle-outline</VIcon>
-                  </template>
-                  <div>
-                    <p>This determines how the cost of bills is shared.</p>
-                    <p>
-                      If <strong>Income Ratio</strong> is selected, bills will be split unequally
-                      using income.
-                    </p>
-                  </div>
-                </VTooltip>
-                <VSwitch
-                  v-model="bill.splitType"
-                  :false-value="SplitType.EQUAL"
-                  :true-value="SplitType.RATIO"
-                  density="compact"
-                  hide-details
-                >
-                  <template #prepend>
-                    <VLabel>
-                      <VIcon icon="mdi-scale-balance" size="small" class="mr-2" />
-                      <span>Equal</span>
-                    </VLabel>
-                  </template>
-                  <template #label>
-                    <span>Income Ratio</span>
-                    <VIcon icon="mdi-scale-unbalanced" size="small" class="ml-2" />
-                  </template>
-                </VSwitch>
+                <SplitTypeRadio v-model:model-value="bill.splitType" />
               </VCard>
             </VCol>
           </VRow>

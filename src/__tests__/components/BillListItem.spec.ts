@@ -1,7 +1,8 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { setActivePinia, createPinia } from 'pinia';
 import { mount } from '@vue/test-utils';
-import { type Bill, BillFrequency } from '@/types/Bill';
+import { type Bill, BillFrequency, SplitType } from '@/types/Bill';
+import { CurrencyIcon } from '@/types/General';
 import BillListItem from '@/components/BillListItem.vue';
 import { createVuetify } from 'vuetify';
 const vuetify = createVuetify();
@@ -13,6 +14,7 @@ const defaultBill = ({
   frequency = BillFrequency.MONTHLY,
   belongsTo = [],
   paidBy = '',
+  splitType = SplitType.EQUAL,
 }: Partial<Bill> = {}): Bill => ({
   id,
   name,
@@ -20,11 +22,26 @@ const defaultBill = ({
   frequency,
   belongsTo,
   paidBy,
+  splitType,
 });
 
-const defaultProps = ({ bill = defaultBill(), index = 2 } = {}) => ({
+const defaultPeople = () => [
+  { id: '1', name: 'Bob', fallbackName: 'Person #1', income: 10000, defaultPayer: true },
+  { id: '2', name: 'Jim', fallbackName: 'Person #2', income: 10000, defaultPayer: false },
+];
+
+const defaultProps = ({
+  bill = defaultBill(),
+  index = 2,
+  people = defaultPeople(),
+  currencyIcon = CurrencyIcon.GBP,
+  descriptionAutocompleteItems = ['Rent', 'Home Insurance', 'Electricy'],
+} = {}) => ({
   bill,
   index,
+  people,
+  currencyIcon,
+  descriptionAutocompleteItems,
 });
 
 const defaultGlobal = () => ({

@@ -1,19 +1,18 @@
 <script setup lang="ts">
 import type { Person } from '@/types/Person';
+import type { CurrencyIcon } from '@/types/General';
 import { ref } from 'vue';
-import { storeToRefs } from 'pinia';
 import { usePeopleStore } from '@/stores/people';
 import { useBillsStore } from '@/stores/bills';
-import { useGeneralStore } from '@/stores/general';
 
 const props = defineProps<{
   modelValue: boolean;
   person: Person;
+  currencyIcon: CurrencyIcon;
 }>();
 
 const peopleStore = usePeopleStore();
 const billsStore = useBillsStore();
-const { currencyIcon } = storeToRefs(useGeneralStore());
 
 const showConfirmDelete = ref(false);
 
@@ -61,7 +60,8 @@ defineExpose({ showConfirmDelete });
               class="mb-3"
               @click="onMakeDefaultClick"
             >
-              Make default bill payer for new bills
+              <span class="sm:hidden">Default bill payer </span>
+              <span class="hidden sm:block"> Default bill payer for new bills </span>
             </VBtn>
             <div class="flex align-center justify-between">
               <span>Monthly income</span>
