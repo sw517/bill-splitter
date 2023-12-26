@@ -98,42 +98,18 @@ describe('BillListItem', () => {
       expect((costInputElement.element as HTMLInputElement).value).toBe('1000');
     });
 
-    it('opens a confirmation dialog when the delete button is clicked', async () => {
+    it('emits "settings-click" event when the settings button is clicked', async () => {
       const wrapper = mount(BillListItem, {
         props: defaultProps(),
         global: defaultGlobal(),
       });
-      expect(wrapper.find('[data-vitest="bill-list-item-dialog"]').exists()).toBe(false);
+
+      expect(wrapper.emitted('settings-click')).toBeFalsy();
       const configureButtonWrapper = wrapper.findComponent(
         '[data-vitest="bill-list-item-button-configure"]'
       );
       await configureButtonWrapper.trigger('click');
-      expect(wrapper.find('[data-vitest="bill-list-item-dialog"]').exists()).toBe(true);
-    });
-
-    it('renders a frequency input', async () => {
-      const wrapper = mount(BillListItem, {
-        props: defaultProps(),
-        global: defaultGlobal(),
-      });
-      wrapper.vm.showConfigureDialog = true;
-      await wrapper.vm.$nextTick();
-      expect(wrapper.find('[data-vitest="bill-list-item-input-frequency"]').exists()).toBe(true);
-    });
-
-    it('renders the bill frequency in the input', async () => {
-      const wrapper = mount(BillListItem, {
-        global: defaultGlobal(),
-        props: defaultProps(),
-      });
-      wrapper.vm.showConfigureDialog = true;
-      await wrapper.vm.$nextTick();
-
-      const frequencyInputWrapper = wrapper.findComponent(
-        '[data-vitest="bill-list-item-input-frequency"]'
-      );
-      const frequencyInputElement = frequencyInputWrapper.find('input');
-      expect((frequencyInputElement.element as HTMLInputElement).value).toBe(BillFrequency.MONTHLY);
+      expect(wrapper.emitted('settings-click')).toEqual([[defaultBill()]]);
     });
 
     it('renders an error icon if a bill is incomplete', async () => {

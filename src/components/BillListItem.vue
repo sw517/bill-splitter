@@ -5,7 +5,10 @@ import { type CurrencyIcon } from '@/types/General';
 import { computed, ref } from 'vue';
 import { useBillsStore } from '@/stores/bills';
 import { usePeopleStore } from '@/stores/people';
-import BillSettingsDialog from '@/components/BillSettingsDialog.vue';
+
+const emit = defineEmits<{
+  (e: 'settings-click', bill: Bill): void;
+}>();
 
 const props = defineProps<{
   bill: Bill;
@@ -106,7 +109,7 @@ defineExpose({ showConfigureDialog });
         color="primary"
         size="x-small"
         data-vitest="bill-list-item-button-configure"
-        @click="showConfigureDialog = true"
+        @click="emit('settings-click', bill)"
       />
     </VCol>
     <VCol cols="12">
@@ -152,13 +155,6 @@ defineExpose({ showConfigureDialog });
         </div>
       </div>
     </VCol>
-
-    <BillSettingsDialog
-      v-model:modelValue="showConfigureDialog"
-      :bill="bill"
-      :currency-icon="currencyIcon"
-      :people="people"
-    />
   </VRow>
 </template>
 

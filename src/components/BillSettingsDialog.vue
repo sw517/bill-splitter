@@ -38,6 +38,7 @@ const onBillDelete = () => {
 
 const onBillDeleteConfirm = () => {
   billsStore.deleteBill(props.bill.id);
+  showDeleteConfirmDialog.value = false;
   emit('update:modelValue', false);
 };
 
@@ -53,15 +54,16 @@ const belongsToEveryone = computed(() => {
   <VDialog
     :model-value="modelValue"
     max-width="768px"
-    data-vitest="bill-list-item-dialog"
+    data-vitest="bill-settings-dialog"
     v-bind="$attrs"
+    @update:model-value="emit('update:modelValue', false)"
   >
     <VCard>
       <VCardTitle class="flex justify-between">
-        <span class="whitespace-normal block mr-6">
+        <span class="whitespace-normal block mr-6" data-vitest="bill-settings-dialog-description">
           {{ bill.name || 'Unnamed bill' }}
         </span>
-        <span class="inline-flex items-baseline">
+        <span class="inline-flex items-baseline" data-vitest="bill-settings-dialog-cost">
           <VIcon :icon="currencyIcon" size="x-small" />
           {{ bill.cost }}
         </span>
@@ -74,7 +76,7 @@ const belongsToEveryone = computed(() => {
                 label="Frequency"
                 :model-value="bill.frequency"
                 :items="billFrequencyOptions"
-                data-vitest="bill-list-item-input-frequency"
+                data-vitest="bill-settings-dialog-input-frequency"
                 hide-details
                 @update:modelValue="onInput($event, 'frequency')"
               />
@@ -84,7 +86,7 @@ const belongsToEveryone = computed(() => {
                 label="Paid by"
                 :model-value="bill.paidBy"
                 :items="peopleOptions"
-                data-vitest="bill-list-item-input-paidby"
+                data-vitest="bill-settings-dialog-input-paidby"
                 prepend-inner-icon="mdi-bank-transfer-out"
                 hide-details
                 @update:modelValue="onInput($event, 'paidBy')"
@@ -96,7 +98,7 @@ const belongsToEveryone = computed(() => {
                 :model-value="bill.belongsTo"
                 :items="peopleOptions"
                 multiple
-                data-vitest="bill-list-item-input-belongsto"
+                data-vitest="bill-settings-dialog-input-belongsto"
                 hide-details
                 prepend-inner-icon="mdi-account-group"
                 @update:modelValue="onInput($event, 'belongsTo')"
@@ -127,7 +129,7 @@ const belongsToEveryone = computed(() => {
   <VDialog
     v-model:model-value="showDeleteConfirmDialog"
     max-width="420"
-    data-vitest="bill-list-item-dialog-delete"
+    data-vitest="bill-settings-dialog-dialog-delete"
   >
     <VCard>
       <VCardTitle>Remove Bill</VCardTitle>
@@ -139,7 +141,7 @@ const belongsToEveryone = computed(() => {
         <VBtn
           color="error"
           variant="flat"
-          data-vitest="bill-list-item-button-confirm-delete"
+          data-vitest="bill-settings-dialog-button-confirm-delete"
           @click="onBillDeleteConfirm"
           >Remove</VBtn
         >
