@@ -2,10 +2,8 @@
 import PersonListItem from '@/components/PersonListItem.vue';
 import { useGeneralStore } from '@/stores/general';
 import { usePeopleStore } from '@/stores/people';
-import { storeToRefs } from 'pinia';
 
 const peopleStore = usePeopleStore();
-const { people } = storeToRefs(peopleStore);
 const { currencyIcon } = useGeneralStore();
 const addPerson = peopleStore.addPerson;
 </script>
@@ -13,7 +11,7 @@ const addPerson = peopleStore.addPerson;
 <template>
   <VCard title="People">
     <VCardText>
-      <template v-for="(person, index) in people" :key="person.id">
+      <template v-for="(person, index) in peopleStore.people" :key="person.id">
         <VDivider v-if="index !== 0" class="mb-4 v-divider--xxs-only" />
         <PersonListItem
           :person="person"

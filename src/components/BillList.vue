@@ -5,14 +5,16 @@ import BillListItem from '@/components/BillListItem.vue';
 import BillSettingsDialog from '@/components/BillSettingsDialog.vue';
 import billAutocompleteItems from '@/assets/data/bill-autocomplete-items';
 
+import { usePeopleStore } from '@/stores/people';
 import { useBillsStore } from '@/stores/bills';
 import { useGeneralStore } from '@/stores/general';
-import { usePeopleStore } from '@/stores/people';
+import { storeToRefs } from 'pinia';
 
+const peopleStore = usePeopleStore();
 const billsStore = useBillsStore();
-const { people } = usePeopleStore();
 const { currencyIcon } = useGeneralStore();
 
+const { people } = storeToRefs(peopleStore);
 const billSelected: Ref<Bill | undefined> = ref();
 const showConfigureDialog: Ref<boolean> = ref(false);
 
