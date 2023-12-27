@@ -58,6 +58,11 @@ const vuetify = createVuetify({
       color: 'secondary',
       density: 'compact',
     },
+    VTextarea: {
+      variant: 'outlined',
+      color: 'secondary',
+      density: 'compact',
+    },
     VCombobox: {
       variant: 'outlined',
       color: 'secondary',
@@ -76,6 +81,9 @@ const vuetify = createVuetify({
     },
     VRadio: {
       color: 'secondary',
+    },
+    VSnackbar: {
+      color: '#333',
     },
   },
 });

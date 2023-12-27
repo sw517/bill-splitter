@@ -22,6 +22,7 @@ const generalStore = useGeneralStore();
 
 const showSettingsDialog = ref(false);
 const showLoadStorageSnackbar = ref(false);
+const showConfirmClearStorage = ref(false);
 const showUseStorageSnackbar = ref(false);
 
 const saveToLocalStorage = () => {
@@ -100,6 +101,10 @@ onBeforeMount(() => {
 });
 
 const onClearStorageClicked = () => {
+  showConfirmClearStorage.value = true;
+};
+
+const onClearStorageConfirm = () => {
   localStorage.clear();
   generalStore.$reset();
   peopleStore.$reset();

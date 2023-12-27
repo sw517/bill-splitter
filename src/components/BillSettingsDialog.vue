@@ -4,6 +4,7 @@ import { type Person } from '@/types/Person';
 import { type CurrencyIcon } from '@/types/General';
 import { useBillsStore } from '@/stores/bills';
 import { computed, ref } from 'vue';
+import ConfirmRemoveDialog from '@/components/ConfirmRemoveDialog.vue';
 import SplitTypeRadio from '@/components/SplitType.vue';
 
 const emit = defineEmits(['update:modelValue']);
@@ -125,27 +126,10 @@ const belongsToEveryone = computed(() => {
     </VCard>
   </VDialog>
 
-  <!-- Confirm Dialog -->
-  <VDialog
+  <ConfirmRemoveDialog
     v-model:model-value="showDeleteConfirmDialog"
-    max-width="420"
-    data-vitest="bill-settings-dialog-dialog-delete"
-  >
-    <VCard>
-      <VCardTitle>Remove Bill</VCardTitle>
-      <VCardSubtitle class="whitespace-normal"
-        >Are you sure you want to remove this bill?</VCardSubtitle
-      >
-      <VCardActions class="justify-between px-6 py-4">
-        <VBtn variant="text" @click="showDeleteConfirmDialog = false">Cancel</VBtn>
-        <VBtn
-          color="error"
-          variant="flat"
-          data-vitest="bill-settings-dialog-button-confirm-delete"
-          @click="onBillDeleteConfirm"
-          >Remove</VBtn
-        >
-      </VCardActions>
-    </VCard>
-  </VDialog>
+    title="Remove Bill"
+    entity="bill"
+    @confirm="onBillDeleteConfirm"
+  />
 </template>

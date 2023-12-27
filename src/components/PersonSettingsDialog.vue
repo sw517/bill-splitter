@@ -4,6 +4,7 @@ import type { CurrencyIcon } from '@/types/General';
 import { ref } from 'vue';
 import { usePeopleStore } from '@/stores/people';
 import { useBillsStore } from '@/stores/bills';
+import ConfirmRemoveDialog from '@/components/ConfirmRemoveDialog.vue';
 
 const emit = defineEmits(['update:modelValue']);
 
@@ -99,27 +100,10 @@ defineExpose({ showConfirmDelete });
     </VCard>
   </VDialog>
 
-  <!-- Confirm Dialog -->
-  <VDialog
+  <ConfirmRemoveDialog
     v-model:model-value="showConfirmDelete"
-    max-width="420"
-    data-vitest="person-list-item-dialog-delete"
-  >
-    <VCard>
-      <VCardTitle>Remove Person</VCardTitle>
-      <VCardSubtitle class="whitespace-normal"
-        >Are you sure you want to remove this person?</VCardSubtitle
-      >
-      <VCardActions class="justify-between px-6 py-4">
-        <VBtn variant="text" @click="showConfirmDelete = false">Cancel</VBtn>
-        <VBtn
-          color="error"
-          variant="flat"
-          data-vitest="person-list-item-button-confirm-delete"
-          @click="onDeleteConfirm"
-          >Remove</VBtn
-        >
-      </VCardActions>
-    </VCard>
-  </VDialog>
+    title="Remove Person"
+    entity="person"
+    @confirm="onDeleteConfirm"
+  />
 </template>
