@@ -58,7 +58,7 @@ const onNameInput = (input: Person['name']) => {
       <VTextField
         label="Monthly Income"
         :model-value="person.income"
-        input-type="number"
+        type="number"
         hide-details
         data-vitest="person-list-item-input-income"
         @update:modelValue="onInput(Number($event), 'income')"

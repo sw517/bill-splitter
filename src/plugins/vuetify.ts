@@ -84,6 +84,7 @@ const vuetify = createVuetify({
     },
     VSnackbar: {
       color: '#333',
+      class: 'bottom-1',
     },
   },
 });

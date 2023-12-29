@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, type Ref } from 'vue';
 import { onBeforeMount } from 'vue';
 import { useTheme, useDisplay } from 'vuetify';
 import { useGeneralStore } from './stores/general';
@@ -24,10 +24,15 @@ const peopleStore = usePeopleStore();
 const generalStore = useGeneralStore();
 
 const showSettingsDialog = ref(false);
-const showLoadStorageSnackbar = ref(false);
+const showLoadedStorageSnackbar = ref(false);
 const showConfirmClearStorage = ref(false);
 const showUseStorageSnackbar = ref(false);
 const showDataClearedSnackbar = ref(false);
+
+const onCloseLoadedStorageSnackbar = (value: boolean) => {
+  showLoadedStorageSnackbar.value = value;
+  localStorage.setItem('storageSnackbarDate', new Date().toDateString());
+};
 
 const saveToLocalStorage = () => {
   localStorage.setItem('general', JSON.stringify(generalStore.$state));
@@ -92,12 +97,19 @@ onBeforeMount(() => {
     }
   }
 
+  const storageSnackbarInteractDate = localStorage.getItem('storageSnackbarDate');
+  const hasInteractedWithStorageSnackbar =
+    storageSnackbarInteractDate &&
+    new Date(storageSnackbarInteractDate).toDateString() === new Date().toDateString();
+
   if (
     localStorage.getItem('general') ||
     localStorage.getItem('bills') ||
     localStorage.getItem('people')
   ) {
-    showLoadStorageSnackbar.value = true;
+    if (!hasInteractedWithStorageSnackbar) {
+      showLoadedStorageSnackbar.value = true;
+    }
     loadFromLocalStorage();
   } else {
     showUseStorageSnackbar.value = true;
@@ -113,7 +125,7 @@ const onClearStorageConfirm = () => {
   generalStore.$reset();
   peopleStore.$reset();
   billsStore.$reset();
-  showLoadStorageSnackbar.value = false;
+  showLoadedStorageSnackbar.value = false;
   showConfirmClearStorage.value = false;
   showDataClearedSnackbar.value = true;
 };
@@ -124,7 +136,7 @@ const onEnableAutosaveClicked = () => {
 };
 
 defineExpose({
-  showLoadStorageSnackbar,
+  showLoadedStorageSnackbar,
   showSettingsDialog,
   saveToLocalStorage,
   loadFromLocalStorage,
@@ -164,9 +176,10 @@ defineExpose({
         data-vitest="app-dialog-settings"
       />
       <LoadStorageSnackbar
-        v-model:model-value="showLoadStorageSnackbar"
+        :model-value="showLoadedStorageSnackbar"
         data-vitest="app-snackbar-load-storage"
         @clear-storage-clicked="onClearStorageClicked"
+        @update:model-value="onCloseLoadedStorageSnackbar"
       />
       <UseStorageSnackbar
         v-model:model-value="showUseStorageSnackbar"

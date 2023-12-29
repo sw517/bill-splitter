@@ -98,7 +98,12 @@ const isValidLoadData = computed(() => {
 </script>
 
 <template>
-  <VDialog max-width="768" :model-value="modelValue" v-bind="$attrs">
+  <VDialog
+    max-width="768"
+    :model-value="modelValue"
+    v-bind="$attrs"
+    @update:model-value="emit('update:modelValue', $event)"
+  >
     <VCard>
       <VCardTitle>Settings</VCardTitle>
       <Transition name="fade-slide" mode="out-in">

@@ -84,7 +84,7 @@ defineExpose({ showConfigureDialog });
       <VTextField
         label="Cost"
         :model-value="bill.cost"
-        input-type="number"
+        type="number"
         hide-details
         data-vitest="bill-list-item-input-cost"
         @update:modelValue="onInput(Number($event), 'cost')"
