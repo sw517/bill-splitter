@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { type Ref, ref } from 'vue';
 import { type Bill } from '@/types/Bill';
-import BillListItem from '@/components/BillListItem.vue';
-import BillSettingsDialog from '@/components/BillSettingsDialog.vue';
+import BillListItem from '@/components/bill-list/BillListItem.vue';
+import BillSettingsDialog from '@/components/bill-list/BillSettingsDialog.vue';
 import billAutocompleteItems from '@/assets/data/bill-autocomplete-items';
 
 import { usePeopleStore } from '@/stores/people';

@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { setActivePinia, createPinia } from 'pinia';
 import { mount } from '@vue/test-utils';
-import PersonList from '@/components/PersonList.vue';
+import PersonList from '@/components/person-list/PersonList.vue';
 import { createVuetify } from 'vuetify';
 import { usePeopleStore } from '@/stores/people';
 const vuetify = createVuetify();

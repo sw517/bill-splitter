@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { setActivePinia, createPinia } from 'pinia';
 import { mount } from '@vue/test-utils';
-import LoadStorageSnackbar from '@/components/LoadStorageSnackbar.vue';
+import LoadStorageSnackbar from '@/components/snackbars/LoadStorage.vue';
 import { createVuetify } from 'vuetify';
 const vuetify = createVuetify();
 

@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { BillFrequency, type Bill, SplitType } from '@/types/Bill';
+import { BillFrequency, type Bill } from '@/types/Bill';
 import { type Person } from '@/types/Person';
 import { type CurrencyIcon } from '@/types/General';
 import { useBillsStore } from '@/stores/bills';
 import { computed, ref } from 'vue';
-import ConfirmRemoveDialog from '@/components/ConfirmRemoveDialog.vue';
+import ConfirmRemoveDialog from '@/components/dialogs/ConfirmRemove.vue';
 import SplitTypeRadio from '@/components/SplitType.vue';
 
 const emit = defineEmits(['update:modelValue']);

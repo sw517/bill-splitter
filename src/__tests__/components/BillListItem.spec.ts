@@ -3,7 +3,7 @@ import { setActivePinia, createPinia } from 'pinia';
 import { mount } from '@vue/test-utils';
 import { type Bill, BillFrequency, SplitType } from '@/types/Bill';
 import { CurrencyIcon } from '@/types/General';
-import BillListItem from '@/components/BillListItem.vue';
+import BillListItem from '@/components/bill-list/BillListItem.vue';
 import { createVuetify } from 'vuetify';
 const vuetify = createVuetify();
 

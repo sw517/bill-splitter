@@ -5,14 +5,17 @@ import { useTheme, useDisplay } from 'vuetify';
 import { useGeneralStore } from './stores/general';
 import { useBillsStore } from './stores/bills';
 import { usePeopleStore } from './stores/people';
-import PersonList from './components/PersonList.vue';
-import BillList from './components/BillList.vue';
+import PersonList from './components/person-list/PersonList.vue';
+import BillList from './components/bill-list/BillList.vue';
 import SummaryTable from './components/SummaryTable.vue';
 import NavigationBar from './components/NavigationBar.vue';
-import SettingsDialog from './components/SettingsDialog.vue';
-import LoadStorageSnackbar from './components/LoadStorageSnackbar.vue';
-import UseStorageSnackbar from './components/UseStorageSnackbar.vue';
+import SettingsDialog from './components/dialogs/GeneralSettings.vue';
+import LoadStorageSnackbar from './components/snackbars/LoadStorage.vue';
+import UseStorageSnackbar from './components/snackbars/UseStorage.vue';
 import DebtSummary from './components/DebtSummary.vue';
+import ConfirmRemoveDialog from './components/dialogs/ConfirmRemove.vue';
+import DataClearedSnackbar from './components/snackbars/DataCleared.vue';
+
 const theme = useTheme();
 const { smAndDown } = useDisplay();
 
@@ -24,6 +27,7 @@ const showSettingsDialog = ref(false);
 const showLoadStorageSnackbar = ref(false);
 const showConfirmClearStorage = ref(false);
 const showUseStorageSnackbar = ref(false);
+const showDataClearedSnackbar = ref(false);
 
 const saveToLocalStorage = () => {
   localStorage.setItem('general', JSON.stringify(generalStore.$state));
@@ -110,6 +114,8 @@ const onClearStorageConfirm = () => {
   peopleStore.$reset();
   billsStore.$reset();
   showLoadStorageSnackbar.value = false;
+  showConfirmClearStorage.value = false;
+  showDataClearedSnackbar.value = true;
 };
 
 const onEnableAutosaveClicked = () => {
@@ -167,6 +173,13 @@ defineExpose({
         data-vitest="app-snackbar-use-storage"
         @enable-autosave-clicked="onEnableAutosaveClicked"
       />
+      <ConfirmRemoveDialog
+        v-model:model-value="showConfirmClearStorage"
+        title="Clear local data"
+        subtitle="Are you sure you want to clear all local data?"
+        @confirm="onClearStorageConfirm"
+      />
+      <DataClearedSnackbar v-model:model-value="showDataClearedSnackbar" />
     </VLayout>
   </VApp>
 </template>

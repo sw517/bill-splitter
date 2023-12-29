@@ -1,10 +1,14 @@
 <script setup lang="ts">
-import { type Ref, ref } from 'vue';
+import { type Ref, ref, computed } from 'vue';
 import SplitType from '@/components/SplitType.vue';
-import { useGeneralStore } from '../stores/general';
+import DataCopiedSnackbar from '@/components/snackbars/DataCopied.vue';
+import DataSavedSnackbar from '@/components/snackbars/DataSaved.vue';
+import { useGeneralStore } from '@/stores/general';
 import { usePeopleStore } from '@/stores/people';
 import { useBillsStore } from '@/stores/bills';
 import { Currency, CurrencyIcon } from '@/types/General';
+
+const emit = defineEmits(['update:modelValue', 'clear-storage-clicked']);
 
 defineProps({
   modelValue: Boolean,
@@ -14,6 +18,7 @@ const billsStore = useBillsStore();
 const peopleStore = usePeopleStore();
 const generalStore = useGeneralStore();
 const currencyOptions = Object.keys(Currency);
+const showDataSavedSnackbar: Ref<boolean> = ref(false);
 const showCopyDataSnackbar: Ref<boolean> = ref(false);
 const showLoadDataInput: Ref<boolean> = ref(false);
 const loadDataInput: Ref<string> = ref('');
@@ -74,15 +79,29 @@ const onSaveClick = () => {
         peopleStore.$reset();
       }
     }
+
+    showLoadDataInput.value = false;
+    loadDataInput.value = '';
+    showDataSavedSnackbar.value = true;
   } catch (error) {}
 };
+
+const isValidLoadData = computed(() => {
+  if (!loadDataInput.value) return true;
+
+  try {
+    return !!JSON.parse(loadDataInput.value);
+  } catch (error) {
+    return false;
+  }
+});
 </script>
 
 <template>
   <VDialog max-width="768" :model-value="modelValue" v-bind="$attrs">
     <VCard>
       <VCardTitle>Settings</VCardTitle>
-      <Transition>
+      <Transition name="fade-slide" mode="out-in">
         <VCardText v-if="!showLoadDataInput">
           <VBtn
             variant="outlined"
@@ -150,8 +169,13 @@ const onSaveClick = () => {
             label="Load data"
             rows="3"
             data-vitest="settings-input-load-data"
+            hint="Data must be a valid JSON format"
+            :error="!isValidLoadData"
+            :error-messages="
+              [!isValidLoadData ? 'Data is not a valid JSON format' : ''].filter(Boolean)
+            "
           />
-          <div class="flex align-center justify-end">
+          <div class="flex align-center justify-end mt-4">
             <VBtn
               variant="text"
               prepend-icon="mdi-content-paste"
@@ -176,22 +200,29 @@ const onSaveClick = () => {
           variant="flat"
           color="error"
           data-vitest="settings-button-clear"
-          @click="$emit('clear-storage-clicked')"
+          @click="emit('clear-storage-clicked')"
         >
           Clear data
         </VBtn>
-        <VBtn variant="flat" color="primary" @click="$emit('update:modelValue', false)">
+        <VBtn variant="flat" color="primary" @click="emit('update:modelValue', false)">
           Close
         </VBtn>
       </VCardActions>
     </VCard>
   </VDialog>
-  <VSnackbar v-model:model-value="showCopyDataSnackbar" timeout="4000">
-    <div class="flex align-center">
-      <VIcon icon="mdi-content-copy" class="mr-3" />
-      <span>Data copied to clipboard</span>
-    </div>
-  </VSnackbar>
+  <DataCopiedSnackbar v-model:model-value="showCopyDataSnackbar" />
+  <DataSavedSnackbar v-model:model-value="showDataSavedSnackbar" />
 </template>
 
-<style scoped></style>
+<style scoped>
+.fade-slide-enter-active,
+.fade-slide-leave-active {
+  transition: transform ease 0.3s, opacity ease 0.3s;
+}
+
+.fade-slide-enter-from,
+.fade-slide-leave-to {
+  opacity: 0;
+  transform: translateX(-30px);
+}
+</style>

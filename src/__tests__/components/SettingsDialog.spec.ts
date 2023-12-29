@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { setActivePinia, createPinia } from 'pinia';
 import { mount } from '@vue/test-utils';
-import SettingsDialog from '@/components/SettingsDialog.vue';
+import SettingsDialog from '@/components/dialogs/SettingsDialog.vue';
 import { createVuetify } from 'vuetify';
 import { useGeneralStore } from '@/stores/general';
 import { useBillsStore } from '@/stores/bills';

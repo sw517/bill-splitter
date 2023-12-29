@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref, type Ref } from 'vue';
 import { type Person } from '@/types/Person';
-import PersonSettingsDialog from '@/components/PersonSettingsDialog.vue';
-import PersonListItem from '@/components/PersonListItem.vue';
+import PersonSettingsDialog from '@/components/person-list/PersonSettingsDialog.vue';
+import PersonListItem from '@/components/person-list/PersonListItem.vue';
 import { useGeneralStore } from '@/stores/general';
 import { usePeopleStore } from '@/stores/people';
 

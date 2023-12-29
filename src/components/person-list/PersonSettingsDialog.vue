@@ -4,7 +4,7 @@ import type { CurrencyIcon } from '@/types/General';
 import { ref } from 'vue';
 import { usePeopleStore } from '@/stores/people';
 import { useBillsStore } from '@/stores/bills';
-import ConfirmRemoveDialog from '@/components/ConfirmRemoveDialog.vue';
+import ConfirmRemoveDialog from '@/components/dialogs/ConfirmRemove.vue';
 
 const emit = defineEmits(['update:modelValue']);
 

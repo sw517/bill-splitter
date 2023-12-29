@@ -57,7 +57,10 @@ export const usePeopleStore = defineStore('people', () => {
   }
 
   function $reset() {
-    people.value = [blankPerson(), blankPerson()];
+    people.value = [
+      blankPerson({ fallbackName: 'Person #1' }),
+      blankPerson({ fallbackName: 'Person #2' }),
+    ];
     defaultPayer.value = people.value[0].id;
   }
 
