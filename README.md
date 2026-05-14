@@ -2,7 +2,7 @@
 
 A responsive web-app/PWA to make bill splitting easy!
 
-[Take a look](https://billsplitter.app/)
+[Take a look](https://euphonious-concha-ca318a.netlify.app/)
 
 1. Add users and their incomes
 2. Add bills, these can be either shared or individual
